@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "704687825645",
+    "firebase_url": "https://social-relationships.firebaseio.com",
+    "project_id": "social-relationships",
+    "storage_bucket": "social-relationships.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:704687825645:android:b5ab7df201a591c65de2e4",
+        "android_client_info": {
+          "package_name": "com.alexchar_dev.socialrelationships"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "704687825645-eiogf7h4il44vvu5hs4dlbrvde55c97m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfuQcxO5yduzqAv0xNc8Bt60ZX5hFjMCM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "704687825645-eiogf7h4il44vvu5hs4dlbrvde55c97m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
