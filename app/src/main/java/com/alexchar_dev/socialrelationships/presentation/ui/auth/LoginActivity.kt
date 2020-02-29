@@ -1,13 +1,13 @@
-package com.alexchar_dev.socialrelationships.presentation.ui
+package com.alexchar_dev.socialrelationships.presentation.ui.auth
 
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
 import com.alexchar_dev.socialrelationships.R
 
-class MainActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_login)
     }
 }
