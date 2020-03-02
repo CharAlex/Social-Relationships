@@ -12,13 +12,14 @@ import com.alexchar_dev.socialrelationships.R
 import kotlinx.android.synthetic.main.fragment_auth_home.*
 import kotlinx.android.synthetic.main.new_email_account_fragment.*
 import kotlinx.android.synthetic.main.new_email_account_fragment.view.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 private const val ARG_PARAM1 = "userEmail"
 private var EMAIL: String? = null
 
 class NewEmailAccountFragment : Fragment() {
 
-    private lateinit var viewModel: NewEmailAccountViewModel
+    val viewModel: NewEmailAccountViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,11 +33,13 @@ class NewEmailAccountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         user_email_display.text = EMAIL
+        create_user_button.setOnClickListener{
+            viewModel.createUser(user_email_display.text.toString(),password.text.toString())
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(NewEmailAccountViewModel::class.java)
         // TODO: Use the ViewModel
     }
 

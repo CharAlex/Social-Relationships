@@ -1,8 +1,10 @@
 package com.alexchar_dev.socialrelationships.presentation.ui.auth
 
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Patterns
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -40,7 +42,7 @@ class AuthHomeFragment : Fragment() {
                 }
 
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    view.create_account_button.isEnabled = !p0.isNullOrEmpty()
+                    view.create_account_button.isEnabled = !p0.isNullOrEmpty() && p0.isValidEmail()
                 }
             })
             setOnKeyListener(object:View.OnKeyListener{
@@ -74,4 +76,5 @@ class AuthHomeFragment : Fragment() {
 
 
     }
+    fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }
