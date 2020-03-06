@@ -1,7 +1,6 @@
 package com.alexchar_dev.socialrelationships.presentation.ui.auth
 
 import android.os.Bundle
-import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Patterns
@@ -10,12 +9,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.alexchar_dev.socialrelationships.R
 import kotlinx.android.synthetic.main.fragment_auth_home.*
 import kotlinx.android.synthetic.main.fragment_auth_home.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.time.measureDuration
+import kotlin.system.measureTimeMillis
 
 
 class AuthHomeFragment : Fragment() {
+
+    private val viewModel: AuthHomeViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,17 +73,38 @@ class AuthHomeFragment : Fragment() {
 
         //start new fragment for username, password
         create_account_button.setOnClickListener {
-            parentFragmentManager
-                .beginTransaction()
-                .replace(
-                    R.id.fragment_container,
-                    NewEmailAccountFragment.newInstance(user_email.text.toString())
-                )
-                .addToBackStack(NewEmailAccountFragment().tag)
-                .commit()
+            var isEmailValid = false
+            lifecycleScope.launch {
+                progress_circular.visibility = View.VISIBLE
+                withContext(Dispatchers.IO){
+                    isEmailValid = viewModel.isEmailValid(user_email.text.toString())
+                }
+
+                if(isEmailValid) {
+                    withContext(Dispatchers.Main){
+                        completeRegistrationFragment()
+                    }
+                } else {
+                    progress_circular.visibility = View.GONE
+                    user_email.error = "Email is already in use"
+                }
+            }
+
+
         }
 
 
     }
+    private fun completeRegistrationFragment() {
+        parentFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.fragment_container,
+                NewEmailAccountFragment.newInstance(user_email.text.toString())
+            )
+            .addToBackStack(NewEmailAccountFragment().tag)
+            .commit()
+    }
+    //TODO move to viewmodel
     fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }

@@ -19,7 +19,7 @@ private var EMAIL: String? = null
 
 class NewEmailAccountFragment : Fragment() {
 
-    val viewModel: NewEmailAccountViewModel by viewModel()
+    private val viewModel: NewEmailAccountViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

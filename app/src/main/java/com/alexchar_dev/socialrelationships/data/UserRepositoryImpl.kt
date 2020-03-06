@@ -9,4 +9,8 @@ class UserRepositoryImpl(
     override fun createUserWithEmail(email: String, password: String) {
         firebaseAuth.createFirebaseUser(email, password)
     }
+
+    override suspend fun isValidEmail(email: String) : Boolean{
+        return firebaseAuth.isValidEmail(email)
+    }
 }

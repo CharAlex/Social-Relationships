@@ -52,6 +52,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/user_email" />
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:id="@+id/progress_circular"
+        app:layout_constraintTop_toBottomOf="@id/user_email"
+        app:layout_constraintBottom_toBottomOf="@id/create_account_button"
+        app:layout_constraintLeft_toRightOf="@id/create_account_button"
+        android:visibility="gone"
+        />
 
     <TextView
         android:id="@+id/textView"

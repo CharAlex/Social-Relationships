@@ -10,9 +10,10 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
+        //TODO retain state on configuration change AuthHomeFragment
         supportFragmentManager
             .beginTransaction()
-            .add(
+            .replace(
                 R.id.fragment_container,
                 AuthHomeFragment()
             )

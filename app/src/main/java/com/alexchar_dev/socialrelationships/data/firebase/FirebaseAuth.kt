@@ -2,6 +2,7 @@ package com.alexchar_dev.socialrelationships.data.firebase
 
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.tasks.await
 
 class FirebaseAuth {
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -16,5 +17,10 @@ class FirebaseAuth {
                     println("debug: registration failed")
                 }
             }
+    }
+
+    suspend fun isValidEmail(email: String): Boolean {
+        val user = auth.fetchSignInMethodsForEmail(email).await()
+        return user.signInMethods?.isEmpty() ?: false
     }
 }
