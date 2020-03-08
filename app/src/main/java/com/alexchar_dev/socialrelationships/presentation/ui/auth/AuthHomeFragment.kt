@@ -59,7 +59,7 @@ class AuthHomeFragment : Fragment() {
                     if (p2?.action == KeyEvent.ACTION_DOWN) {
                         when (p1) {
                             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
-                                if(view.user_email.text.isNullOrEmpty()) return false
+                                if(!view.user_email.text.isValidEmail()) return false
                                 view.create_account_button.callOnClick()
                                 return true
                             }

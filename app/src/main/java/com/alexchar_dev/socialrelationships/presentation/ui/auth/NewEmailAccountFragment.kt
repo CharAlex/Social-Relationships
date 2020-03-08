@@ -1,7 +1,6 @@
 package com.alexchar_dev.socialrelationships.presentation.ui.auth
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,9 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.alexchar_dev.socialrelationships.R
-import kotlinx.android.synthetic.main.fragment_auth_home.*
 import kotlinx.android.synthetic.main.new_email_account_fragment.*
-import kotlinx.android.synthetic.main.new_email_account_fragment.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 private const val ARG_PARAM1 = "userEmail"
