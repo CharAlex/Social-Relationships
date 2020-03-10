@@ -43,11 +43,9 @@ class NewEmailAccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //username filters lower case and only symbols [._] and letters and numbers
-        //TODO username filters lower case and only symbols [._] and letters and numbers
-        username.filters = arrayOf<InputFilter>(UserNameInputFilter())
 
         user_email_display.text = Email
+
         create_user_button.setOnClickListener{
             //TODO viewmodel method createUser launch in coroutine
             val accountCreated = viewModel.createUser(user_email_display.text.toString(),password.text.toString(), username.text.toString())
@@ -63,15 +61,14 @@ class NewEmailAccountFragment : Fragment() {
 
         //TODO confirm password check and done button check username password valid
 
-        //check if username is taken and apply filter
-        username.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) { filterUsername(s) }
-
-            override fun afterTextChanged(s: Editable?) {
-                checkUsernameTaken(s)
-            }
-        })
+        username.apply {
+            filters = arrayOf<InputFilter>(UserNameInputFilter(), InputFilter.LengthFilter(30))
+            addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) { filterUsername(s) }
+                override fun afterTextChanged(s: Editable?) { checkUsernameTaken(s) }
+            })
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

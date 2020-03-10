@@ -41,7 +41,6 @@ class FirebaseAuth {
     }
 
     private suspend fun createFirestoreUserCollection(userId: String, email: String, username: String) {
-        //TODO store username
         val user = hashMapOf(
             "uid" to userId,
             "username" to username,

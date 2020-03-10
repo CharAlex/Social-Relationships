@@ -14,12 +14,9 @@ import com.alexchar_dev.socialrelationships.R
 import kotlinx.android.synthetic.main.fragment_auth_home.*
 import kotlinx.android.synthetic.main.fragment_auth_home.view.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.time.measureDuration
-import kotlin.system.measureTimeMillis
 
 
 class AuthHomeFragment : Fragment() {
@@ -103,6 +100,6 @@ class AuthHomeFragment : Fragment() {
             .addToBackStack(NewEmailAccountFragment().tag)
             .commit()
     }
-    //TODO move to viewmodel
+
     fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }

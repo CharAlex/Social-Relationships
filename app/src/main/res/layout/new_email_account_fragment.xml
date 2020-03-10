@@ -12,12 +12,14 @@
 
     <EditText
         android:id="@+id/username"
-        android:maxLength="30"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
+        android:textCursorDrawable="@null"
+        android:background="@drawable/edit_text_background"
         android:hint="username"
+        android:textSize="@dimen/input_text_size"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +31,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
+        android:textCursorDrawable="@null"
+        android:background="@drawable/edit_text_background"
         android:hint="password"
+        android:textSize="@dimen/input_text_size"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,8 +46,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
+        android:textCursorDrawable="@null"
+        android:background="@drawable/edit_text_background"
         android:hint="confirm password"
         android:inputType="textPassword"
+        android:textSize="@dimen/input_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password" />
@@ -61,23 +69,38 @@
         android:id="@+id/user_email_display"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:text="TextView"
+        android:textColor="@color/blackText"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <TextView
         android:id="@+id/wrong_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/lightGrey"
         android:text="@string/wrong_username"
         android:textColor="@color/error"
         android:visibility="gone"
+        android:padding="@dimen/sm_padding"
         app:layout_constraintBottom_toTopOf="@+id/password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/main_padding"
+        android:gravity="center_horizontal"
+        android:text="@string/choose_username"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
