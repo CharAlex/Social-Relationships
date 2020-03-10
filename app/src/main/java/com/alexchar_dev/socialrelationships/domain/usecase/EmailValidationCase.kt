@@ -4,7 +4,7 @@ import com.alexchar_dev.socialrelationships.domain.repository.UserRepository
 
 class EmailValidationCaseImpl(private val userRepository: UserRepository) : EmailValidationCase {
     override suspend fun isEmailValid(email: String): Boolean {
-        return userRepository.isValidEmail(email)
+        return userRepository.isEmailValid(email)
     }
 
 

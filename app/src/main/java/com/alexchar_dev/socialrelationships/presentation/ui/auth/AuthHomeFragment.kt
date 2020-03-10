@@ -44,11 +44,8 @@ class AuthHomeFragment : Fragment() {
         //Handle email input
         with(user_email) {
             addTextChangedListener(object:TextWatcher{
-                override fun afterTextChanged(p0: Editable?) {
-                }
-
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                }
+                override fun afterTextChanged(p0: Editable?) { }
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
 
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                     view.create_account_button.isEnabled = !p0.isNullOrEmpty() && p0.isValidEmail()
@@ -100,7 +97,8 @@ class AuthHomeFragment : Fragment() {
             .beginTransaction()
             .replace(
                 R.id.fragment_container,
-                NewEmailAccountFragment.newInstance(user_email.text.toString())
+                //TODO IF PRESS QUICKLY CREATE AGAIN EMAIL IS NULL
+                NewEmailAccountFragment.newInstance(user_email?.text.toString())
             )
             .addToBackStack(NewEmailAccountFragment().tag)
             .commit()

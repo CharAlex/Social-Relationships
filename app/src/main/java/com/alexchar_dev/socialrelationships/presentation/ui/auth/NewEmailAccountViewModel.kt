@@ -8,7 +8,11 @@ class NewEmailAccountViewModel(
 ) : ViewModel() {
 
     //call use case to create account
-    fun createUser(email: String, password: String){
-            newEmailAccountCase(email, password)
+    fun createUser(email: String, password: String, username: String) : Boolean{
+            return newEmailAccountCase.createUserWithEmail(email, password, username)
+    }
+
+    suspend fun isUsernameTaken(username: String): Boolean {
+        return newEmailAccountCase.isUsernameTaken(username)
     }
 }
