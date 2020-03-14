@@ -67,6 +67,7 @@ class AuthHomeFragment : Fragment() {
 
         //start new fragment for username, password
         create_account_button.setOnClickListener {
+            create_account_button.isEnabled = false
             var isEmailValid = false
             lifecycleScope.launch {
                 progress_circular.visibility = View.VISIBLE
@@ -80,6 +81,7 @@ class AuthHomeFragment : Fragment() {
                     }
                 } else {
                     progress_circular.visibility = View.GONE
+                    create_account_button.isEnabled = true
                     user_email.error = "Email is already in use"
                 }
             }
@@ -94,7 +96,6 @@ class AuthHomeFragment : Fragment() {
             .beginTransaction()
             .replace(
                 R.id.fragment_container,
-                //TODO IF PRESS QUICKLY CREATE AGAIN EMAIL IS NULL
                 NewEmailAccountFragment.newInstance(user_email?.text.toString())
             )
             .addToBackStack(NewEmailAccountFragment().tag)

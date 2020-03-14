@@ -22,7 +22,7 @@
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:text="Continue with Gmail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,13 +34,14 @@
         android:id="@+id/user_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:text="asd@as.co"
-        android:hint="name@..."
-        android:textSize="@dimen/input_text_size"
-        android:textCursorDrawable="@null"
+        android:layout_marginTop="32dp"
         android:background="@drawable/edit_text_background"
+        android:ems="10"
+        android:hint="name@..."
         android:inputType="textEmailAddress"
+        android:text="asd@as.co"
+        android:textCursorDrawable="@null"
+        android:textSize="@dimen/input_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button2" />
@@ -74,6 +75,7 @@
         android:layout_marginBottom="32dp"
         android:text="Already have an account?"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/log_in_button"
         app:layout_constraintStart_toStartOf="@+id/user_email" />
 
     <Button
@@ -86,7 +88,6 @@
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="@+id/user_email"
-        app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toTopOf="@+id/textView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

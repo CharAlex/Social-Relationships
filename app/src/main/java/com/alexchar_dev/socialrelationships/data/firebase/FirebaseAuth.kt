@@ -1,46 +1,42 @@
 package com.alexchar_dev.socialrelationships.data.firebase
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 
 class FirebaseAuth {
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private var accountCreated = MutableLiveData<Boolean>()
+
     companion object {
         var count = 0
     }
 
-    fun createFirebaseUser(email: String, password: String, username: String) : Boolean {
-        var accountCreated = false
+    fun createFirebaseUser(email: String, password: String, username: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    if(user != null){
-                        GlobalScope.launch {
-                            withContext(Dispatchers.IO){
-                                createFirestoreUserCollection(user.uid, email, username)
-                                println("debug: registration successful: $user")
-                                //TODO if registration successful start new activity
-                                accountCreated = true
-                            }
-                        }
+                    if (user != null) {
+                        println("debug: registration successful: $user")
+                        createFirestoreUserCollection(email, password, username)
                     }
                 } else {
                     println("debug: registration failed")
-                    accountCreated = false
+                    accountCreated.postValue(false)
                 }
             }
-        return accountCreated
     }
 
-    private suspend fun createFirestoreUserCollection(userId: String, email: String, username: String) {
+    fun getRegistrationResponse() = accountCreated
+
+    private fun createFirestoreUserCollection(userId: String, email: String, username: String) {
         val user = hashMapOf(
             "uid" to userId,
             "username" to username,
@@ -52,11 +48,14 @@ class FirebaseAuth {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     println("debug: collection created successfully: ${task}")
+                    accountCreated.postValue(true)
                 } else {
                     println("debug: user collection creation failed")
+                    accountCreated.postValue(false)
                 }
-            }.await()
+            }
     }
+
 
     suspend fun isValidEmail(email: String): Boolean {
         val user = auth.fetchSignInMethodsForEmail(email).await()
@@ -73,7 +72,7 @@ class FirebaseAuth {
             .limit(1)
             .get()
             .addOnCompleteListener { task ->
-                if(task.isSuccessful) {
+                if (task.isSuccessful) {
                     for (documentSnapshot in task.result!!) {
                         println("debug: documentSnapshot: $documentSnapshot")
                         val user = documentSnapshot.getString("username")

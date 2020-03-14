@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
 
         //temp
         log_out_button.setOnClickListener {
+            //TODO check with auth.currentUser
             val sharedPreferences = getSharedPreferences("auth", Context.MODE_PRIVATE)
             sharedPreferences.edit().clear().apply()
             val intent = Intent(this, AuthActivity::class.java)

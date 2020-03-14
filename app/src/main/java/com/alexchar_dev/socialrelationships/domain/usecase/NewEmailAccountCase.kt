@@ -1,13 +1,17 @@
 package com.alexchar_dev.socialrelationships.domain.usecase
 
+import androidx.lifecycle.LiveData
 import com.alexchar_dev.socialrelationships.domain.repository.UserRepository
 
 
 class NewEmailAccountCaseImpl(private val userRepository: UserRepository) : NewEmailAccountCase {
 
-    override fun createUserWithEmail(email: String, password: String, username: String) : Boolean {
-        //create account here and if need to return something add after invoke() : something
-        return userRepository.createUserWithEmail(email, password, username)
+    override fun createUserWithEmail(email: String, password: String, username: String) {
+        userRepository.createUserWithEmail(email, password, username)
+    }
+
+    override fun observeRegistrationResponse(): LiveData<Boolean> {
+        return userRepository.observeRegistrationResponse()
     }
 
     override suspend fun isUsernameTaken(username: String) : Boolean{
@@ -16,7 +20,8 @@ class NewEmailAccountCaseImpl(private val userRepository: UserRepository) : NewE
 }
 
 interface NewEmailAccountCase {
-    fun createUserWithEmail(email: String, password: String, username: String) : Boolean
+    fun createUserWithEmail(email: String, password: String, username: String)
+    fun observeRegistrationResponse() : LiveData<Boolean>
     suspend fun isUsernameTaken(username: String) : Boolean
 }
 

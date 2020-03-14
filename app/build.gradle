@@ -62,4 +62,9 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.1.1'
     //LifecycleScope
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_extension_version"
+    //Material Components
+    implementation "com.google.android.material:material:1.1.0"
+    //LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha01"
+
 }

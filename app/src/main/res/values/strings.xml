@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">Social Relationships</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="wrong_username">The username should contain only letters, digits, underline and dot characters</string>
-    <string name="choose_username">Choose a username for your new account! You can always change it later if you decide</string>
+    <string name="choose_username">Choose a username for your new account! You can always change it later if you wish</string>
 </resources>
