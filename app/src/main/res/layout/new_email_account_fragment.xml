@@ -10,41 +10,49 @@
     android:layout_height="match_parent"
     android:paddingHorizontal="@dimen/main_padding">
 
-    <EditText
-        android:id="@+id/username"
+    <com.alexchar_dev.socialrelationships.presentation.utils.NoChangingBackgroundTextInputLayout
+        android:id="@+id/usernameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:ems="10"
-        android:textCursorDrawable="@null"
-        android:background="@drawable/edit_text_background"
-        android:hint="username"
-        android:textSize="@dimen/input_text_size"
-        android:inputType="textPersonName"
+        app:hintEnabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_email_display" />
+        app:layout_constraintTop_toBottomOf="@+id/user_email_display">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_input_background"
+            android:hint="username"
+            android:inputType="textPersonName"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/input_text_size"
+            android:layout_marginBottom="6dp"/>
+    </com.alexchar_dev.socialrelationships.presentation.utils.NoChangingBackgroundTextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/passwordLayout"
+        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:hintEnabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/wrong_username"
-        android:layout_marginTop="16dp"
-        android:id="@+id/passwordLayout"
-        app:hintEnabled="false"
+        app:layout_constraintTop_toBottomOf="@id/usernameLayout"
         app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password"
-            android:background="@drawable/edit_text_background"
-            android:textSize="@dimen/input_text_size"
-            android:textCursorDrawable="@null"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/text_input_background"
             android:hint="password"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword"
+            android:textCursorDrawable="@null"
+            android:layout_marginBottom="6dp"
+            android:textSize="@dimen/input_text_size" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -68,20 +76,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-    <TextView
-        android:id="@+id/wrong_username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/lightGrey"
-        android:text="@string/wrong_username"
-        android:textColor="@color/error"
-        android:visibility="gone"
-        android:padding="@dimen/sm_padding"
-        app:layout_constraintBottom_toTopOf="@+id/passwordLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
 
     <TextView
         android:id="@+id/textView3"

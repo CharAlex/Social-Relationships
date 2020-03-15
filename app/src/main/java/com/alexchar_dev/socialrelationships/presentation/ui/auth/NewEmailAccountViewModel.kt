@@ -17,7 +17,6 @@ class NewEmailAccountViewModel(
     val registrationResponse : LiveData<Boolean>
         get() = _registrationResponse
 
-    //call use case to create account
     fun createUser(email: String, password: String, username: String) {
         newEmailAccountCase.createUserWithEmail(email, password, username)
     }

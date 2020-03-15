@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.alexchar_dev.socialrelationships.R
 import com.alexchar_dev.socialrelationships.presentation.utils.UserNameInputFilter
 import com.alexchar_dev.socialrelationships.presentation.utils.usernameCharacters
+import io.opencensus.resource.Resource
 import kotlinx.android.synthetic.main.new_email_account_fragment.*
 import kotlinx.android.synthetic.main.new_email_account_fragment.username
 import kotlinx.android.synthetic.main.new_email_account_fragment.view.*
@@ -38,6 +39,7 @@ class NewEmailAccountFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         return inflater.inflate(R.layout.new_email_account_fragment, container, false)
     }
 
@@ -45,20 +47,27 @@ class NewEmailAccountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         user_email_display.text = Email
 
-        viewModel.registrationResponse.observe(viewLifecycleOwner, androidx.lifecycle.Observer { accountCreated ->
-            if(accountCreated == true) {
-                Toast.makeText(context,"Account Created!", Toast.LENGTH_LONG).show()
-            } else if (accountCreated == false) {
-                Toast.makeText(context, "Weak password!", Toast.LENGTH_LONG).show()
-                create_user_button.isEnabled = true
-            }
-        })
+        viewModel.registrationResponse.observe(
+            viewLifecycleOwner,
+            androidx.lifecycle.Observer { accountCreated ->
+                if (accountCreated == true) {
+                    Toast.makeText(context, "Account Created!", Toast.LENGTH_LONG).show()
+                } else if (accountCreated == false) {
+                    Toast.makeText(context, "Weak password!", Toast.LENGTH_LONG).show()
+                    create_user_button.isEnabled = true
+                }
+            })
 
-        create_user_button.setOnClickListener{
+        create_user_button.setOnClickListener {
             create_user_button.isEnabled = false
-            viewModel.createUser(user_email_display.text.toString(), password.text.toString(), username.text.toString())
+            viewModel.createUser(
+                user_email_display.text.toString(),
+                password.text.toString(),
+                username.text.toString()
+            )
             val sp = activity?.getSharedPreferences("auth", Context.MODE_PRIVATE)
-            sp?.edit()?.putBoolean("logged", true)?.apply() // probably dont need in case i check with auth.currentUser if is null or not
+            sp?.edit()?.putBoolean("logged", true)
+                ?.apply() // probably dont need in case i check with auth.currentUser if is null or not
         }
 
         //TODO confirm password check and done button check username password valid
@@ -66,11 +75,44 @@ class NewEmailAccountFragment : Fragment() {
         username.apply {
             filters = arrayOf<InputFilter>(UserNameInputFilter(), InputFilter.LengthFilter(30))
             addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) { filterUsername(s) }
-                override fun afterTextChanged(s: Editable?) { checkUsernameTaken(s) }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int ) { }
+
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                    filterUsername(s)
+                }
+
+                override fun afterTextChanged(s: Editable?) {
+                    checkUsernameTaken(s)
+                }
             })
+
+            setOnFocusChangeListener{ _, hasFocus ->
+                if (!hasFocus) {
+                    view.usernameLayout.error = ""
+                }
+            }
         }
+
+        password.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                if (password.text.toString().length in 1..4) {
+                    passwordLayout.error = getString(R.string.weak_password)
+                } else {
+                    passwordLayout.error = ""
+                }
+            }
+        }
+        password.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {}
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if (p0.toString().length > 5) {
+                    passwordLayout.error = ""
+                }
+            }
+        })
     }
 
     override fun onDetach() {
@@ -88,29 +130,21 @@ class NewEmailAccountFragment : Fragment() {
     private fun Char.isUsernameCharacters(): Boolean = usernameCharacters.contains(this)
 
     private fun filterUsername(s: CharSequence) {
-        val invalidCharacters = s.filter { c -> !c.isUsernameCharacters()}
+        val invalidCharacters = s.filter { c -> !c.isUsernameCharacters() }
 
         val isUsernameValid = invalidCharacters.isEmpty()
 
-        if(isUsernameValid && !wasUsernameInvalid) {
-            wrong_username.visibility = View.GONE // or could animate
+        if (isUsernameValid && !wasUsernameInvalid) {
+            usernameLayout.error = null
         }
 
-        if(!isUsernameValid) {
-            if(!wrong_username.isShown)
-                wrong_username.apply {
-                    visibility = View.VISIBLE
-                    alpha = 0.0f
-
-                    animate()
-                        .translationY(0.0f)
-                        .alpha(1.0f)
-                }
+        if (!isUsernameValid) {
+            usernameLayout.error = getString(R.string.wrong_username)
 
             username.apply {
                 wasUsernameInvalid = true
-                setText(s.filter { c -> !invalidCharacters.contains(c)})
-                setSelection(username.text.length)
+                setText(s.filter { c -> !invalidCharacters.contains(c) })
+                setSelection(username.text?.length ?: 0)
             }
         } else {
             wasUsernameInvalid = false

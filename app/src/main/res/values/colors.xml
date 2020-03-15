@@ -11,4 +11,5 @@
     <color name="error">#FF1744</color>
     <color name="facebookPrimary">#3b5998</color>
     <color name="buttonPrimaryBlue">#3897f0</color>
+    <color name="transparent">#00FFFFFF</color>
 </resources>
