@@ -1,6 +1,8 @@
 package com.alexchar_dev.socialrelationships.presentation.ui.auth
 
 import android.content.Context
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -33,7 +35,7 @@ class NewEmailAccountFragment : Fragment() {
     private val viewModel: NewEmailAccountViewModel by viewModel()
     private var wasUsernameInvalid = false
     var timer = Timer()
-
+    private var isUsernameAvailable : Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,22 +75,28 @@ class NewEmailAccountFragment : Fragment() {
         //TODO confirm password check and done button check username password valid
 
         username.apply {
+            var checkRequired = true
             filters = arrayOf<InputFilter>(UserNameInputFilter(), InputFilter.LengthFilter(30))
             addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int ) { }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int ) {
+                    checkRequired = s.isUsernameCharacters()
+                }
 
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                     filterUsername(s)
                 }
 
                 override fun afterTextChanged(s: Editable?) {
-                    checkUsernameTaken(s)
+                    //no need to check username availability when user types invalid characters
+                    if(checkRequired) checkUsernameTaken(s)
                 }
             })
 
             setOnFocusChangeListener{ _, hasFocus ->
                 if (!hasFocus) {
                     view.usernameLayout.error = ""
+                } else if (hasFocus && !isUsernameAvailable) {
+                    view.usernameLayout.error = getString(R.string.username_not_available)
                 }
             }
         }
@@ -151,8 +159,13 @@ class NewEmailAccountFragment : Fragment() {
         }
     }
 
+    private fun CharSequence?.isUsernameCharacters() : Boolean {
+        if(this.isNullOrEmpty()) return true
+        val invalidCharacters = this.filter { c -> !c.isUsernameCharacters() }
+        return invalidCharacters.isEmpty()
+    }
+
     private fun checkUsernameTaken(s: Editable?) {
-        //TODO check if username was changed or its same
         timer.cancel()
         val sleep = when (s?.length) {
             1, 2, 3, 4, 5 -> 1500L
@@ -169,10 +182,41 @@ class NewEmailAccountFragment : Fragment() {
                     isTaken = viewModel.isUsernameTaken(s.toString())
                 }
                 withContext(Dispatchers.Main) {
-                    if (isTaken) username.error = "username: ${s.toString()} is taken"
+                    if (isTaken) {
+                        isUsernameAvailable = false
+                        username.setCompoundDrawables(null, null, errorIcon, null)
+                        usernameLayout.error = getString(R.string.username_not_available)
+                    } else {
+                        username.setCompoundDrawables(null, null, successIcon, null)
+                        isUsernameAvailable = true
+                    }
                 }
             }
         }
+    }
+
+    private val errorIcon : Drawable?
+    get()
+    {
+        val errorIcon: Drawable? = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            context?.resources?.getDrawable(R.drawable.ic_error_text_input)
+        } else {
+            context?.resources?.getDrawable(R.drawable.ic_error_text_input, null);
+        }
+        errorIcon?.setBounds(0, 0, resources.getDimensionPixelSize(R.dimen.icon_size), resources.getDimensionPixelSize(R.dimen.icon_size))
+        return errorIcon
+    }
+
+    private val successIcon : Drawable?
+        get()
+        {
+        val successIcon: Drawable? = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            context?.resources?.getDrawable(R.drawable.ic_success_text_input)
+        } else {
+            context?.resources?.getDrawable(R.drawable.ic_success_text_input, null);
+        }
+        successIcon?.setBounds(0, 0, resources.getDimensionPixelSize(R.dimen.icon_size), resources.getDimensionPixelSize(R.dimen.icon_size))
+        return successIcon
     }
 
     companion object {

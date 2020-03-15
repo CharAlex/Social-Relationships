@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="main_padding">64dp</dimen>
+    <dimen name="main_padding">32dp</dimen>
     <dimen name="xs_padding">4dp</dimen>
     <dimen name="sm_padding">8dp</dimen>
     <dimen name="md_padding">12dp</dimen>
     <dimen name="input_text_size">16dp</dimen>
+    <dimen name="icon_size">24dp</dimen>
 </resources>

@@ -7,6 +7,7 @@
     <color name="blackText">#212121</color>
     <color name="lightGrey">#FAFAFA</color>
     <color name="mediumGrey">#F5F5F5</color>
+    <color name="iconGrey">#9e9e9e</color>
     <color name="borderGrey">#E0E0E0</color>
     <color name="error">#FF1744</color>
     <color name="facebookPrimary">#3b5998</color>
