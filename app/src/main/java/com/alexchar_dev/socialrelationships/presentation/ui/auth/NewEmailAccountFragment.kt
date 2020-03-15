@@ -7,13 +7,10 @@ import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import com.alexchar_dev.socialrelationships.R
 import com.alexchar_dev.socialrelationships.presentation.utils.UserNameInputFilter
 import com.alexchar_dev.socialrelationships.presentation.utils.usernameCharacters
@@ -48,7 +45,7 @@ class NewEmailAccountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         user_email_display.text = Email
 
-        viewModel.observeRegistrationResponse().observe(viewLifecycleOwner, androidx.lifecycle.Observer { accountCreated ->
+        viewModel.registrationResponse.observe(viewLifecycleOwner, androidx.lifecycle.Observer { accountCreated ->
             if(accountCreated == true) {
                 Toast.makeText(context,"Account Created!", Toast.LENGTH_LONG).show()
             } else if (accountCreated == false) {
@@ -74,6 +71,11 @@ class NewEmailAccountFragment : Fragment() {
                 override fun afterTextChanged(s: Editable?) { checkUsernameTaken(s) }
             })
         }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        viewModel.clearLiveData()
     }
 
     override fun onAttach(context: Context) {

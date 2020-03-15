@@ -1,18 +1,15 @@
 package com.alexchar_dev.socialrelationships.data.firebase
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
 
 
 class FirebaseAuth {
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private var accountCreated = MutableLiveData<Boolean>()
+    private var registrationResponse =  MutableLiveData<Boolean>()
 
     companion object {
         var count = 0
@@ -24,17 +21,18 @@ class FirebaseAuth {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (user != null) {
-                        println("debug: registration successful: $user")
+                        println("debug: reg" +
+                                "istration successful: $user")
                         createFirestoreUserCollection(email, password, username)
                     }
                 } else {
                     println("debug: registration failed")
-                    accountCreated.postValue(false)
+                    registrationResponse.postValue(false)
                 }
             }
     }
 
-    fun getRegistrationResponse() = accountCreated
+    fun getRegistrationResponse() = registrationResponse
 
     private fun createFirestoreUserCollection(userId: String, email: String, username: String) {
         val user = hashMapOf(
@@ -48,10 +46,10 @@ class FirebaseAuth {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     println("debug: collection created successfully: ${task}")
-                    accountCreated.postValue(true)
+                    registrationResponse.postValue(true)
                 } else {
                     println("debug: user collection creation failed")
-                    accountCreated.postValue(false)
+                    registrationResponse.postValue(false)
                 }
             }
     }
