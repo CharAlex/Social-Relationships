@@ -10,15 +10,16 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.alexchar_dev.socialrelationships.R
 import com.alexchar_dev.socialrelationships.presentation.utils.UserNameInputFilter
 import com.alexchar_dev.socialrelationships.presentation.utils.usernameCharacters
-import io.opencensus.resource.Resource
 import kotlinx.android.synthetic.main.new_email_account_fragment.*
-import kotlinx.android.synthetic.main.new_email_account_fragment.username
 import kotlinx.android.synthetic.main.new_email_account_fragment.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,6 +27,7 @@ import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 import kotlin.concurrent.schedule
+
 
 private const val ARG_PARAM1 = "userEmail"
 private var Email: String? = null
@@ -48,6 +50,7 @@ class NewEmailAccountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         user_email_display.text = Email
+        usernameLayout.error = " " //add empty error to add the appropriate padding
 
         viewModel.registrationResponse.observe(
             viewLifecycleOwner,
@@ -59,6 +62,18 @@ class NewEmailAccountFragment : Fragment() {
                     create_user_button.isEnabled = true
                 }
             })
+
+        viewModel.checkUsernameResponse.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+                if (it == false) {
+                    isUsernameAvailable = false
+                    username.setCompoundDrawables(null, null, errorIcon, null)
+                    usernameLayout.error = getString(R.string.username_not_available)
+                } else if (it == true){
+                    username.setCompoundDrawables(null, null, successIcon, null)
+                    isUsernameAvailable = true
+                }
+
+        })
 
         create_user_button.setOnClickListener {
             create_user_button.isEnabled = false
@@ -101,15 +116,25 @@ class NewEmailAccountFragment : Fragment() {
             }
         }
 
+        //Align the error icon in the password input (due to textInputLayout error adding padding in the textInput)
+        passwordLayout.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                passwordLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                alignErrorIconInTextInput()
+            }
+        })
+
         password.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                if (password.text.toString().length in 1..4) {
-                    passwordLayout.error = getString(R.string.weak_password)
-                } else {
-                    passwordLayout.error = ""
-                }
+
+            val isPasswordInvalid = password.text.toString().length in 1..5
+            if (!hasFocus && isPasswordInvalid) {
+                password_error_icon.visibility = View.VISIBLE
+                passwordLayout.error = " "
+            } else if (hasFocus && isPasswordInvalid) {
+                passwordLayout.error = getString(R.string.weak_password)
             }
         }
+
         password.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {}
 
@@ -117,10 +142,24 @@ class NewEmailAccountFragment : Fragment() {
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (p0.toString().length > 5) {
+                    password_error_icon.visibility = View.GONE
                     passwordLayout.error = ""
                 }
             }
         })
+    }
+
+    private fun alignErrorIconInTextInput() {
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(email_registration_layout)
+        val marginTop = (password.height - password_error_icon.height) / 2
+        println("debug: $marginTop")
+        constraintSet.setMargin(
+            R.id.password_error_icon,
+            ConstraintSet.TOP,
+            marginTop
+        )
+        constraintSet.applyTo(email_registration_layout)
     }
 
     override fun onDetach() {
@@ -176,20 +215,11 @@ class NewEmailAccountFragment : Fragment() {
         timer = Timer()
 
         timer.schedule(sleep) {
-            var isTaken = false
+
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
-                    isTaken = viewModel.isUsernameTaken(s.toString())
-                }
-                withContext(Dispatchers.Main) {
-                    if (isTaken) {
-                        isUsernameAvailable = false
-                        username.setCompoundDrawables(null, null, errorIcon, null)
-                        usernameLayout.error = getString(R.string.username_not_available)
-                    } else {
-                        username.setCompoundDrawables(null, null, successIcon, null)
-                        isUsernameAvailable = true
-                    }
+                    //sets livedata in firebaseauth
+                    viewModel.checkUsernameTaken(s.toString())
                 }
             }
         }
@@ -228,4 +258,5 @@ class NewEmailAccountFragment : Fragment() {
             }
         }
     }
+    //TODO show warning if password is simple
 }

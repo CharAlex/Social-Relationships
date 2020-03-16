@@ -9,7 +9,7 @@ class EmailValidationCaseImpl(private val userRepository: UserRepository) : Emai
 
 
 }
-
+//TODO MOVE HERE THE LOGIC FOR THE MAIL VALIDATION
 interface EmailValidationCase {
     suspend fun isEmailValid(email: String) : Boolean
 }

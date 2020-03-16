@@ -12,24 +12,25 @@ class NewEmailAccountViewModel(
     private val newEmailAccountCase: NewEmailAccountCase
 ) : ViewModel() {
 
-    private var _registrationResponse = observeRegistrationResponse()
+    private var _registrationResponse = newEmailAccountCase.observeRegistrationResponse()
+    private var _checkUsernameResponse = newEmailAccountCase.observeCheckUsernameResponse()
 
     val registrationResponse : LiveData<Boolean>
         get() = _registrationResponse
+
+    val checkUsernameResponse : LiveData<Boolean>
+        get() = _checkUsernameResponse
 
     fun createUser(email: String, password: String, username: String) {
         newEmailAccountCase.createUserWithEmail(email, password, username)
     }
 
-    private fun observeRegistrationResponse(): MutableLiveData<Boolean> {
-        return newEmailAccountCase.observeRegistrationResponse()
-    }
-
-    suspend fun isUsernameTaken(username: String): Boolean {
-        return newEmailAccountCase.isUsernameTaken(username)
+    fun checkUsernameTaken(username: String) {
+        newEmailAccountCase.isUsernameTaken(username)
     }
 
     fun clearLiveData(){
         _registrationResponse.value = null
+        _checkUsernameResponse.value = null
     }
 }

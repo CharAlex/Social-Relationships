@@ -12,6 +12,10 @@ class UserRepositoryImpl(
         return firebaseAuth.getRegistrationResponse()
     }
 
+    override fun observeCheckUsernameResponse(): MutableLiveData<Boolean> {
+        return firebaseAuth.getUsernameCheckResponse()
+    }
+
     override fun createUserWithEmail(email: String, password: String, username: String){
         firebaseAuth.createFirebaseUser(email, password, username)
     }
@@ -20,7 +24,7 @@ class UserRepositoryImpl(
         return firebaseAuth.isValidEmail(email)
     }
 
-    override suspend fun isUsernameTaken(username: String) : Boolean{
-        return firebaseAuth.isUsernameTaken(username)
+    override fun isUsernameTaken(username: String) {
+        firebaseAuth.isUsernameTaken(username)
     }
 }

@@ -10,6 +10,7 @@ class FirebaseAuth {
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private var registrationResponse =  MutableLiveData<Boolean>()
+    private var usernameCheckResponse = MutableLiveData<Boolean>()
 
     companion object {
         var count = 0
@@ -33,6 +34,7 @@ class FirebaseAuth {
     }
 
     fun getRegistrationResponse() = registrationResponse
+    fun getUsernameCheckResponse() = usernameCheckResponse
 
     private fun createFirestoreUserCollection(userId: String, email: String, username: String) {
         val user = hashMapOf(
@@ -60,11 +62,10 @@ class FirebaseAuth {
         return user.signInMethods?.isEmpty() ?: false
     }
 
-    suspend fun isUsernameTaken(username: String): Boolean {
+    fun isUsernameTaken(username: String) {
 
         println("debug: Firebase read operation ${count++}")
 
-        var isTaken = false
         db.collection("users")
             .whereEqualTo("username", username)
             .limit(1)
@@ -75,12 +76,12 @@ class FirebaseAuth {
                         println("debug: documentSnapshot: $documentSnapshot")
                         val user = documentSnapshot.getString("username")
                         if (user == username) {
-                            isTaken = true
+                            usernameCheckResponse.postValue(false)
+                            return@addOnCompleteListener
                         }
                     }
-                    println("debug: isTaken in firebase: $isTaken ${task.result}")
+                    usernameCheckResponse.postValue(true)
                 }
-            }.await()
-        return isTaken
+            }
     }
 }

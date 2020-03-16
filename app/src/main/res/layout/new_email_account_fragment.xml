@@ -8,6 +8,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/email_registration_layout"
     android:paddingHorizontal="@dimen/main_padding">
 
     <com.alexchar_dev.socialrelationships.presentation.utils.NoChangingBackgroundTextInputLayout
@@ -16,6 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:hintEnabled="false"
+        app:errorTextColor="@color/error"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/user_email_display">
@@ -32,12 +34,13 @@
             android:layout_marginBottom="6dp"/>
     </com.alexchar_dev.socialrelationships.presentation.utils.NoChangingBackgroundTextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
+    <com.alexchar_dev.socialrelationships.presentation.utils.NoChangingBackgroundTextInputLayout
         android:id="@+id/passwordLayout"
         android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:hintEnabled="false"
+        app:errorTextColor="@color/error"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/usernameLayout"
@@ -54,17 +57,17 @@
             android:textCursorDrawable="@null"
             android:layout_marginBottom="6dp"
             android:textSize="@dimen/input_text_size" />
-    </com.google.android.material.textfield.TextInputLayout>
+    </com.alexchar_dev.socialrelationships.presentation.utils.NoChangingBackgroundTextInputLayout>
 
     <Button
         android:id="@+id/create_user_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="DONE!"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordLayout" />
+        app:layout_constraintTop_toTopOf="@+id/usernameLayout" />
 
     <TextView
         android:id="@+id/user_email_display"
@@ -88,6 +91,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/password_error_icon"
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:layout_marginEnd="46dp"
+        android:layout_marginRight="46dp"
+        android:visibility="invisible"
+        android:src="@drawable/ic_error_text_input"
+        app:layout_constraintEnd_toEndOf="@+id/passwordLayout"
+        app:layout_constraintTop_toTopOf="@+id/passwordLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

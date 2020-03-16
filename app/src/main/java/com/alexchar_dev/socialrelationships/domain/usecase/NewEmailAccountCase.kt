@@ -15,14 +15,19 @@ class NewEmailAccountCaseImpl(private val userRepository: UserRepository) : NewE
         return userRepository.observeRegistrationResponse()
     }
 
-    override suspend fun isUsernameTaken(username: String) : Boolean{
-        return userRepository.isUsernameTaken(username)
+    override fun observeCheckUsernameResponse(): MutableLiveData<Boolean> {
+        return userRepository.observeCheckUsernameResponse()
+    }
+
+    override  fun isUsernameTaken(username: String) {
+        userRepository.isUsernameTaken(username)
     }
 }
 
 interface NewEmailAccountCase {
     fun createUserWithEmail(email: String, password: String, username: String)
     fun observeRegistrationResponse() : MutableLiveData<Boolean>
-    suspend fun isUsernameTaken(username: String) : Boolean
+    fun observeCheckUsernameResponse() : MutableLiveData<Boolean>
+    fun isUsernameTaken(username: String)
 }
 
