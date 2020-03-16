@@ -1,5 +1,6 @@
 package com.alexchar_dev.socialrelationships.presentation.ui.auth
 
+
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -10,7 +11,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
@@ -18,6 +18,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.alexchar_dev.socialrelationships.R
 import com.alexchar_dev.socialrelationships.presentation.utils.UserNameInputFilter
+import com.alexchar_dev.socialrelationships.presentation.utils.hide
+import com.alexchar_dev.socialrelationships.presentation.utils.show
 import com.alexchar_dev.socialrelationships.presentation.utils.usernameCharacters
 import kotlinx.android.synthetic.main.new_email_account_fragment.*
 import kotlinx.android.synthetic.main.new_email_account_fragment.view.*
@@ -28,7 +30,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 import kotlin.concurrent.schedule
 
-
 private const val ARG_PARAM1 = "userEmail"
 private var Email: String? = null
 
@@ -37,7 +38,7 @@ class NewEmailAccountFragment : Fragment() {
     private val viewModel: NewEmailAccountViewModel by viewModel()
     private var wasUsernameInvalid = false
     var timer = Timer()
-    private var isUsernameAvailable : Boolean = true
+    private var isUsernameAvailable : Boolean? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +52,7 @@ class NewEmailAccountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         user_email_display.text = Email
         usernameLayout.error = " " //add empty error to add the appropriate padding
+        passwordLayout.error = " "
 
         viewModel.registrationResponse.observe(
             viewLifecycleOwner,
@@ -66,9 +68,15 @@ class NewEmailAccountFragment : Fragment() {
         viewModel.checkUsernameResponse.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
                 if (it == false) {
                     isUsernameAvailable = false
+                    create_account_progress_bar.hide()
+                    create_user_button.isEnabled = true
+                    create_user_button.text = "DONE"
                     username.setCompoundDrawables(null, null, errorIcon, null)
                     usernameLayout.error = getString(R.string.username_not_available)
                 } else if (it == true){
+                    create_account_progress_bar.hide()
+                    create_user_button.isEnabled = true
+                    create_user_button.text = "DONE"
                     username.setCompoundDrawables(null, null, successIcon, null)
                     isUsernameAvailable = true
                 }
@@ -76,6 +84,9 @@ class NewEmailAccountFragment : Fragment() {
         })
 
         create_user_button.setOnClickListener {
+            //Validate the inputs
+            if (validateFormInputs(view)) return@setOnClickListener
+
             create_user_button.isEnabled = false
             viewModel.createUser(
                 user_email_display.text.toString(),
@@ -86,8 +97,6 @@ class NewEmailAccountFragment : Fragment() {
             sp?.edit()?.putBoolean("logged", true)
                 ?.apply() // probably dont need in case i check with auth.currentUser if is null or not
         }
-
-        //TODO confirm password check and done button check username password valid
 
         username.apply {
             var checkRequired = true
@@ -103,14 +112,14 @@ class NewEmailAccountFragment : Fragment() {
 
                 override fun afterTextChanged(s: Editable?) {
                     //no need to check username availability when user types invalid characters
-                    if(checkRequired) checkUsernameTaken(s)
+                    if(checkRequired) checkUsernameTaken(s, view)
                 }
             })
 
             setOnFocusChangeListener{ _, hasFocus ->
                 if (!hasFocus) {
                     view.usernameLayout.error = ""
-                } else if (hasFocus && !isUsernameAvailable) {
+                } else if (hasFocus && isUsernameAvailable == false ) {
                     view.usernameLayout.error = getString(R.string.username_not_available)
                 }
             }
@@ -127,8 +136,8 @@ class NewEmailAccountFragment : Fragment() {
         password.setOnFocusChangeListener { _, hasFocus ->
 
             val isPasswordInvalid = password.text.toString().length in 1..5
-            if (!hasFocus && isPasswordInvalid) {
-                password_error_icon.visibility = View.VISIBLE
+            if (!hasFocus && (isPasswordInvalid || password.text.toString().isEmpty())) {
+                password_error_icon.show()
                 passwordLayout.error = " "
             } else if (hasFocus && isPasswordInvalid) {
                 passwordLayout.error = getString(R.string.weak_password)
@@ -142,18 +151,41 @@ class NewEmailAccountFragment : Fragment() {
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (p0.toString().length > 5) {
-                    password_error_icon.visibility = View.GONE
+                    password_error_icon.hide()
                     passwordLayout.error = ""
                 }
             }
         })
     }
 
+    private fun validateFormInputs(view: View): Boolean {
+        var valid = false
+        if (isUsernameAvailable == false || view.username.text.toString().isEmpty()) {
+            showUsernameError(view)
+            valid = true
+        }
+        if (view.password.text.toString().length < 6 || view.password.text.toString().isEmpty()) {
+            showPasswordError(view)
+            valid = true
+        }
+
+        return valid
+    }
+
+    private fun showUsernameError(view: View) {
+        view.username.setCompoundDrawables(null, null, errorIcon, null)
+        view.usernameLayout.error = getString(R.string.username_not_available)
+    }
+
+    private fun showPasswordError(view: View) {
+        view.password_error_icon.show()
+        view.passwordLayout.error = getString(R.string.weak_password)
+    }
+
     private fun alignErrorIconInTextInput() {
         val constraintSet = ConstraintSet()
         constraintSet.clone(email_registration_layout)
         val marginTop = (password.height - password_error_icon.height) / 2
-        println("debug: $marginTop")
         constraintSet.setMargin(
             R.id.password_error_icon,
             ConstraintSet.TOP,
@@ -204,7 +236,7 @@ class NewEmailAccountFragment : Fragment() {
         return invalidCharacters.isEmpty()
     }
 
-    private fun checkUsernameTaken(s: Editable?) {
+    private fun checkUsernameTaken(s: Editable?, view: View) {
         timer.cancel()
         val sleep = when (s?.length) {
             1, 2, 3, 4, 5 -> 1500L
@@ -214,8 +246,11 @@ class NewEmailAccountFragment : Fragment() {
         if (s.isNullOrEmpty()) return
         timer = Timer()
 
-        timer.schedule(sleep) {
+        view.create_account_progress_bar.show()
+        view.create_user_button.text = ""
+        create_user_button.isEnabled = false
 
+        timer.schedule(sleep) {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     //sets livedata in firebaseauth

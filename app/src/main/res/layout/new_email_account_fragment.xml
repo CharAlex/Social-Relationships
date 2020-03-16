@@ -16,8 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:hintEnabled="false"
         app:errorTextColor="@color/error"
+        app:hintEnabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/user_email_display">
@@ -26,12 +26,12 @@
             android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
             android:background="@drawable/text_input_background"
             android:hint="username"
             android:inputType="textPersonName"
             android:textCursorDrawable="@null"
-            android:textSize="@dimen/input_text_size"
-            android:layout_marginBottom="6dp"/>
+            android:textSize="@dimen/input_text_size" />
     </com.alexchar_dev.socialrelationships.presentation.utils.NoChangingBackgroundTextInputLayout>
 
     <com.alexchar_dev.socialrelationships.presentation.utils.NoChangingBackgroundTextInputLayout
@@ -63,11 +63,12 @@
         android:id="@+id/create_user_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="DONE!"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="16dp"
+        style="@style/ButtonPrimary"
+        android:text="DONE"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/usernameLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/passwordLayout" />
 
     <TextView
         android:id="@+id/user_email_display"
@@ -102,6 +103,18 @@
         android:src="@drawable/ic_error_text_input"
         app:layout_constraintEnd_toEndOf="@+id/passwordLayout"
         app:layout_constraintTop_toTopOf="@+id/passwordLayout" />
+
+    <ProgressBar
+        android:id="@+id/create_account_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:indeterminate="true"
+        app:layout_constraintBottom_toBottomOf="@id/create_user_button"
+        app:layout_constraintLeft_toLeftOf="@+id/create_user_button"
+        app:layout_constraintRight_toRightOf="@id/create_user_button"
+        app:layout_constraintTop_toTopOf="@id/create_user_button" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
