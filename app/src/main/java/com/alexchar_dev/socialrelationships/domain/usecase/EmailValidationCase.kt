@@ -1,9 +1,10 @@
 package com.alexchar_dev.socialrelationships.domain.usecase
 
+import com.alexchar_dev.socialrelationships.domain.entity.Result
 import com.alexchar_dev.socialrelationships.domain.repository.UserRepository
 
 class EmailValidationCaseImpl(private val userRepository: UserRepository) : EmailValidationCase {
-    override suspend fun isEmailValid(email: String): Boolean {
+    override suspend fun isEmailValid(email: String): Result<Boolean> {
         return userRepository.isEmailValid(email)
     }
 
@@ -11,5 +12,5 @@ class EmailValidationCaseImpl(private val userRepository: UserRepository) : Emai
 }
 //TODO MOVE HERE THE LOGIC FOR THE MAIL VALIDATION
 interface EmailValidationCase {
-    suspend fun isEmailValid(email: String) : Boolean
+    suspend fun isEmailValid(email: String) : Result<Boolean>
 }

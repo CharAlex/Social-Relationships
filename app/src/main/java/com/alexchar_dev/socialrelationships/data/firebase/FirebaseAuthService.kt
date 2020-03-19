@@ -1,12 +1,16 @@
 package com.alexchar_dev.socialrelationships.data.firebase
 
 import androidx.lifecycle.MutableLiveData
+import com.alexchar_dev.socialrelationships.data.awaitTaskResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.tasks.await
+import com.alexchar_dev.socialrelationships.domain.entity.Result
 
 
-class FirebaseAuth {
+class FirebaseAuthService {
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private var registrationResponse =  MutableLiveData<Boolean>()
@@ -22,13 +26,22 @@ class FirebaseAuth {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (user != null) {
-                        println("debug: reg" +
-                                "istration successful: $user")
                         createFirestoreUserCollection(email, password, username)
                     }
                 } else {
                     println("debug: registration failed")
                     registrationResponse.postValue(false)
+                    try {
+                        throw task.exception!!
+                    } catch (e: FirebaseAuthWeakPasswordException) {
+                        println("debug: FirebaseAuthWeakPasswordException")
+                    } catch (e: FirebaseAuthInvalidCredentialsException) {
+                        println("debug: FirebaseAuthInvalidCredentialsException")
+                    } catch (e: FirebaseAuthUserCollisionException) {
+                        println("debug: FirebaseAuthUserCollisionException")
+                    } catch (e: Exception) {
+                        println("debug: Unkown exception")
+                    }
                 }
             }
     }
@@ -42,7 +55,7 @@ class FirebaseAuth {
             "username" to username,
             "email" to email,
             "isVerified" to false
-        )
+        ) //TODO SAVE AS USER OBJECT
 
         db.collection("users").document(userId).set(user)
             .addOnCompleteListener { task ->
@@ -57,10 +70,19 @@ class FirebaseAuth {
     }
 
 
-    suspend fun isValidEmail(email: String): Boolean {
-        val user = auth.fetchSignInMethodsForEmail(email).await()
-        return user.signInMethods?.isEmpty() ?: false
+    suspend fun isEmailValid(email: String): Result<Boolean> = try {
+
+        val task = awaitTaskResult(auth.fetchSignInMethodsForEmail(email))
+
+        if(task.signInMethods?.isEmpty() == true)
+            Result.Value(true)
+        else
+            Result.Value(false)
+    } catch (exception: Exception) {
+        Result.Error(exception)
     }
+
+
 
     fun isUsernameTaken(username: String) {
 

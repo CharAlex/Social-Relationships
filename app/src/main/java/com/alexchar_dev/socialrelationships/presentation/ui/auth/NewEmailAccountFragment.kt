@@ -2,6 +2,7 @@ package com.alexchar_dev.socialrelationships.presentation.ui.auth
 
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
@@ -17,6 +18,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.alexchar_dev.socialrelationships.R
+import com.alexchar_dev.socialrelationships.presentation.ui.MainActivity
 import com.alexchar_dev.socialrelationships.presentation.utils.UserNameInputFilter
 import com.alexchar_dev.socialrelationships.presentation.utils.hide
 import com.alexchar_dev.socialrelationships.presentation.utils.show
@@ -59,8 +61,14 @@ class NewEmailAccountFragment : Fragment() {
             androidx.lifecycle.Observer { accountCreated ->
                 if (accountCreated == true) {
                     Toast.makeText(context, "Account Created!", Toast.LENGTH_LONG).show()
+                    //TODO START NEW ACTIVITY
+                    activity?.let {
+                        val intent = Intent(it, MainActivity::class.java)
+                        it.startActivity(intent)
+                        it.finish()
+                    }
                 } else if (accountCreated == false) {
-                    Toast.makeText(context, "Weak password!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "An error occurred during your account setup!", Toast.LENGTH_LONG).show()
                     create_user_button.isEnabled = true
                 }
             })
@@ -69,7 +77,7 @@ class NewEmailAccountFragment : Fragment() {
                 if (it == false) {
                     isUsernameAvailable = false
                     create_account_progress_bar.hide()
-                    create_user_button.isEnabled = true
+                    create_user_button.isEnabled = true //TODO refactor this part
                     create_user_button.text = "DONE"
                     username.setCompoundDrawables(null, null, errorIcon, null)
                     usernameLayout.error = getString(R.string.username_not_available)
@@ -88,14 +96,10 @@ class NewEmailAccountFragment : Fragment() {
             if (validateFormInputs(view)) return@setOnClickListener
 
             create_user_button.isEnabled = false
-            viewModel.createUser(
-                user_email_display.text.toString(),
-                password.text.toString(),
-                username.text.toString()
-            )
-            val sp = activity?.getSharedPreferences("auth", Context.MODE_PRIVATE)
-            sp?.edit()?.putBoolean("logged", true)
-                ?.apply() // probably dont need in case i check with auth.currentUser if is null or not
+            create_account_progress_bar.show()
+            create_user_button.text = ""
+
+            viewModel.createUser(user_email_display.text.toString(), password.text.toString(), username.text.toString())
         }
 
         username.apply {
@@ -248,7 +252,7 @@ class NewEmailAccountFragment : Fragment() {
 
         view.create_account_progress_bar.show()
         view.create_user_button.text = ""
-        create_user_button.isEnabled = false
+        view.create_user_button.isEnabled = false
 
         timer.schedule(sleep) {
             lifecycleScope.launch {
