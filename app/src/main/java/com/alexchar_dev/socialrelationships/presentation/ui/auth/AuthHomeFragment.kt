@@ -11,9 +11,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.alexchar_dev.socialrelationships.R
-import com.alexchar_dev.socialrelationships.domain.CustomErrors
 import com.alexchar_dev.socialrelationships.domain.entity.Result
+import com.alexchar_dev.socialrelationships.presentation.utils.disable
+import com.alexchar_dev.socialrelationships.presentation.utils.enable
 import com.alexchar_dev.socialrelationships.presentation.utils.makeToast
+import com.alexchar_dev.socialrelationships.presentation.utils.textToString
 import kotlinx.android.synthetic.main.fragment_auth_home.*
 import kotlinx.android.synthetic.main.fragment_auth_home.view.*
 import kotlinx.coroutines.Dispatchers
@@ -42,13 +44,13 @@ class AuthHomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //Handle email input
-        with(user_email) {
+        user_email.apply {
             addTextChangedListener(object:TextWatcher{
                 override fun afterTextChanged(p0: Editable?) { }
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
 
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    //view.create_account_button.isEnabled = !p0.isNullOrEmpty() && p0.isValidEmail()
+                    view.create_account_button.isEnabled = !p0.isNullOrEmpty() && p0.isValidEmail()
                 }
             })
             setOnKeyListener(object:View.OnKeyListener{
@@ -70,16 +72,18 @@ class AuthHomeFragment : Fragment() {
 
         //start new fragment for username, password
         create_account_button.setOnClickListener {
-            create_account_button.isEnabled = false
+            create_account_button.disable()
             var isEmailValid = false
             lifecycleScope.launch {
-                progress_circular.visibility = View.VISIBLE
+                println("debug: executed")
+                progress_circular.show()
                 withContext(Dispatchers.IO){
-                    val result = viewModel.isEmailValid(user_email.text.toString())
+
+                    val result = viewModel.isEmailValid(user_email.textToString)
 
                     when (result) {
                         is Result.Value -> isEmailValid = result.data
-                        is Result.Error -> withContext(Dispatchers.Main) { makeToast(result.exception.message!!) } //TODO handle error instead
+                        is Result.Error -> withContext(Dispatchers.Main) { makeToast(getString(R.string.something_went_wrong)) }
                     }
                 }
 
@@ -88,8 +92,8 @@ class AuthHomeFragment : Fragment() {
                         completeRegistrationFragment()
                     }
                 } else {
-                    progress_circular.visibility = View.GONE
-                    create_account_button.isEnabled = true
+                    progress_circular.hide()
+                    create_account_button.enable()
                     user_email.error = "Email is already in use"
                 }
             }

@@ -1,11 +1,10 @@
 package com.alexchar_dev.socialrelationships.presentation.ui.auth
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.alexchar_dev.socialrelationships.R
-import com.alexchar_dev.socialrelationships.presentation.ui.MainActivity
+import com.alexchar_dev.socialrelationships.presentation.ui.navigation.MainActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class AuthActivity : AppCompatActivity() {

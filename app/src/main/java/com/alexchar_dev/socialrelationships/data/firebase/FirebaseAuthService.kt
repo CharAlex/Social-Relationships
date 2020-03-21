@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.alexchar_dev.socialrelationships.domain.entity.Result
+import com.alexchar_dev.socialrelationships.domain.entity.User
 
 
 class FirebaseAuthService {
@@ -26,11 +27,11 @@ class FirebaseAuthService {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (user != null) {
-                        createFirestoreUserCollection(email, password, username)
+                        createFirestoreUserCollection(User(email, password, username, false))
                     }
                 } else {
                     println("debug: registration failed")
-                    registrationResponse.postValue(false)
+                    registrationResponse.postValue(false) //TODO return result isntead
                     try {
                         throw task.exception!!
                     } catch (e: FirebaseAuthWeakPasswordException) {
@@ -49,21 +50,13 @@ class FirebaseAuthService {
     fun getRegistrationResponse() = registrationResponse
     fun getUsernameCheckResponse() = usernameCheckResponse
 
-    private fun createFirestoreUserCollection(userId: String, email: String, username: String) {
-        val user = hashMapOf(
-            "uid" to userId,
-            "username" to username,
-            "email" to email,
-            "isVerified" to false
-        ) //TODO SAVE AS USER OBJECT
+    private fun createFirestoreUserCollection(user: User) { //TODO return result
 
-        db.collection("users").document(userId).set(user)
+        db.collection("users").document(user.userId).set(user)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    println("debug: collection created successfully: ${task}")
                     registrationResponse.postValue(true)
                 } else {
-                    println("debug: user collection creation failed")
                     registrationResponse.postValue(false)
                 }
             }
@@ -95,7 +88,6 @@ class FirebaseAuthService {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     for (documentSnapshot in task.result!!) {
-                        println("debug: documentSnapshot: $documentSnapshot")
                         val user = documentSnapshot.getString("username")
                         if (user == username) {
                             usernameCheckResponse.postValue(false)

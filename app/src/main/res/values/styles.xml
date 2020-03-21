@@ -19,4 +19,9 @@
         <item name="android:clickable">true</item>
     </style>
 
+    <!--Autocomplete Dropdown-->
+    <style name="DropDownStyle" parent="@style/Widget.AppCompat.ListView.DropDown">
+        <item name="android:divider">@color/error</item>
+        <item name="android:dividerHeight">2dp</item>
+    </style>
 </resources>

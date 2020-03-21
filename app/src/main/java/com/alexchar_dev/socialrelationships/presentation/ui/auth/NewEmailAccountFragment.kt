@@ -13,16 +13,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.alexchar_dev.socialrelationships.R
-import com.alexchar_dev.socialrelationships.presentation.ui.MainActivity
-import com.alexchar_dev.socialrelationships.presentation.utils.UserNameInputFilter
-import com.alexchar_dev.socialrelationships.presentation.utils.hide
-import com.alexchar_dev.socialrelationships.presentation.utils.show
-import com.alexchar_dev.socialrelationships.presentation.utils.usernameCharacters
+import com.alexchar_dev.socialrelationships.presentation.ui.navigation.MainActivity
+import com.alexchar_dev.socialrelationships.presentation.utils.*
 import kotlinx.android.synthetic.main.new_email_account_fragment.*
 import kotlinx.android.synthetic.main.new_email_account_fragment.view.*
 import kotlinx.coroutines.Dispatchers
@@ -56,50 +52,34 @@ class NewEmailAccountFragment : Fragment() {
         usernameLayout.error = " " //add empty error to add the appropriate padding
         passwordLayout.error = " "
 
-        viewModel.registrationResponse.observe(
-            viewLifecycleOwner,
-            androidx.lifecycle.Observer { accountCreated ->
+        viewModel.registrationResponse.observe(viewLifecycleOwner, androidx.lifecycle.Observer { accountCreated ->
                 if (accountCreated == true) {
-                    Toast.makeText(context, "Account Created!", Toast.LENGTH_LONG).show()
-                    //TODO START NEW ACTIVITY
-                    activity?.let {
-                        val intent = Intent(it, MainActivity::class.java)
-                        it.startActivity(intent)
-                        it.finish()
-                    }
+                    makeToast("Account Created!")
+                    startMainActivity()
                 } else if (accountCreated == false) {
-                    Toast.makeText(context, "An error occurred during your account setup!", Toast.LENGTH_LONG).show()
-                    create_user_button.isEnabled = true
+                    makeToast("An error occurred during your account setup!")
+                    create_user_button.enable()
                 }
             })
 
         viewModel.checkUsernameResponse.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
                 if (it == false) {
-                    isUsernameAvailable = false
-                    create_account_progress_bar.hide()
-                    create_user_button.isEnabled = true //TODO refactor this part
-                    create_user_button.text = "DONE"
-                    username.setCompoundDrawables(null, null, errorIcon, null)
+                    handleUsernameResponse(false, errorIcon)
                     usernameLayout.error = getString(R.string.username_not_available)
                 } else if (it == true){
-                    create_account_progress_bar.hide()
-                    create_user_button.isEnabled = true
-                    create_user_button.text = "DONE"
-                    username.setCompoundDrawables(null, null, successIcon, null)
-                    isUsernameAvailable = true
+                    handleUsernameResponse(true, successIcon)
                 }
 
         })
 
         create_user_button.setOnClickListener {
-            //Validate the inputs
             if (validateFormInputs(view)) return@setOnClickListener
 
-            create_user_button.isEnabled = false
+            create_user_button.disable()
             create_account_progress_bar.show()
             create_user_button.text = ""
 
-            viewModel.createUser(user_email_display.text.toString(), password.text.toString(), username.text.toString())
+            viewModel.createUser(user_email_display.textToString, password.textToString, username.textToString)
         }
 
         username.apply {
@@ -138,9 +118,8 @@ class NewEmailAccountFragment : Fragment() {
         })
 
         password.setOnFocusChangeListener { _, hasFocus ->
-
-            val isPasswordInvalid = password.text.toString().length in 1..5
-            if (!hasFocus && (isPasswordInvalid || password.text.toString().isEmpty())) {
+            val isPasswordInvalid = password.textToString.length in 1..5
+            if (!hasFocus && (isPasswordInvalid || password.textToString.isEmpty())) {
                 password_error_icon.show()
                 passwordLayout.error = " "
             } else if (hasFocus && isPasswordInvalid) {
@@ -162,13 +141,29 @@ class NewEmailAccountFragment : Fragment() {
         })
     }
 
+    private fun handleUsernameResponse(isAvailable: Boolean, icon: Drawable?) {
+        isUsernameAvailable = isAvailable
+        create_account_progress_bar.hide()
+        create_user_button.enable()
+        create_user_button.text = "DONE"
+        username.setCompoundDrawables(null, null, icon, null)
+    }
+
+    private fun startMainActivity() {
+        activity?.let {
+            val intent = Intent(it, MainActivity::class.java)
+            it.startActivity(intent)
+            it.finish()
+        }
+    }
+
     private fun validateFormInputs(view: View): Boolean {
         var valid = false
-        if (isUsernameAvailable == false || view.username.text.toString().isEmpty()) {
+        if (isUsernameAvailable == false || view.username.textToString.isEmpty()) {
             showUsernameError(view)
             valid = true
         }
-        if (view.password.text.toString().length < 6 || view.password.text.toString().isEmpty()) {
+        if (view.password.textToString.length < 6 || view.password.textToString.isEmpty()) {
             showPasswordError(view)
             valid = true
         }
@@ -241,18 +236,26 @@ class NewEmailAccountFragment : Fragment() {
     }
 
     private fun checkUsernameTaken(s: Editable?, view: View) {
+        println("debug: canceling timer $timer")
         timer.cancel()
         val sleep = when (s?.length) {
-            1, 2, 3, 4, 5 -> 1500L
-            else -> 100L
+            1, 2, 3 -> 1000L
+            else -> 500L
+        }
+        if(s.isNullOrBlank()) {
+            view.username.setCompoundDrawables(null, null, null, null)
+            view.create_account_progress_bar.hide()
+            view.create_user_button.text = "DONE"
+            view.create_user_button.enable()
+            return
         }
 
-        if (s.isNullOrEmpty()) return
         timer = Timer()
+        println("debug: new timer $timer")
 
         view.create_account_progress_bar.show()
         view.create_user_button.text = ""
-        view.create_user_button.isEnabled = false
+        view.create_user_button.disable()
 
         timer.schedule(sleep) {
             lifecycleScope.launch {
