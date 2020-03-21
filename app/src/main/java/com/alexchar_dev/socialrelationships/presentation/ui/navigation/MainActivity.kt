@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import com.alexchar_dev.socialrelationships.R
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.home.HomeFragment
+import com.alexchar_dev.socialrelationships.presentation.ui.navigation.notification.NotificationFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.profile.ProfileFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.search.SearchFragment
 import com.alexchar_dev.socialrelationships.presentation.utils.NavigationStack
@@ -27,6 +28,8 @@ class MainActivity : AppCompatActivity() {
 
             navigationStack.push(item.itemId)
 
+            if(bottomNavigationView.selectedItemId == item.itemId) return@setOnNavigationItemSelectedListener true
+
             when(item.itemId) {
                 R.id.home_nav -> {
                     supportFragmentManager.beginTransaction().replace(R.id.fragmentNavContainer, HomeFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit()
@@ -35,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                     supportFragmentManager.beginTransaction().replace(R.id.fragmentNavContainer, SearchFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit()
                 }
                 R.id.notification_nav -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.fragmentNavContainer, HomeFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit()
+                    supportFragmentManager.beginTransaction().replace(R.id.fragmentNavContainer, NotificationFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit()
                 }
                 R.id.profile_nav -> {
                     supportFragmentManager.beginTransaction().replace(R.id.fragmentNavContainer, ProfileFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit()
@@ -49,9 +52,13 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         navigationStack.pop()
         val nextNavigation = navigationStack.peek()
-        if(nextNavigation != null)
-        bottomNavigationView.selectedItemId = nextNavigation as Int
-        else super.onBackPressed()
+
+        if(nextNavigation != null) {
+            bottomNavigationView.selectedItemId = nextNavigation as Int
+        }
+        else {
+            super.onBackPressed()
+        }
     }
 
     companion object ActivityStack {

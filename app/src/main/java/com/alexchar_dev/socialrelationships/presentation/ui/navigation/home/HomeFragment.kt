@@ -31,7 +31,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         addSomeFriendsBtn.setOnClickListener {
-            activity?.bottomNavigationView?.selectedItemId = R.id.search_nav
+            activity?.bottomNavigationView?.selectedItemId = R.id.search_nav //TODO probably bad idea to access activity view directly
         }
     }
 }
