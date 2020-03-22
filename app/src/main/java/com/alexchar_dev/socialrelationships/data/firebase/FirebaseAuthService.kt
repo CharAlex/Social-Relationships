@@ -27,7 +27,7 @@ class FirebaseAuthService {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (user != null) {
-                        createFirestoreUserCollection(User(email, password, username, false))
+                        createFirestoreUserCollection(User(userId = user.uid, email =  email, username =  username, isVerified =  false))
                     }
                 } else {
                     println("debug: registration failed")

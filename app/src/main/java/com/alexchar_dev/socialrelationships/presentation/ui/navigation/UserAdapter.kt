@@ -29,7 +29,7 @@ class UserAdapter(context: Context, private val allUsers: List<User>) : ArrayAda
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val userView = convertView ?:  LayoutInflater.from(context).inflate(
-            R.layout.user_autocomplete_row, parent, false
+            R.layout.user_item, parent, false
         )
 
         val username = userView.findViewById<ConstraintLayout>(R.id.usernameRow) as TextView
