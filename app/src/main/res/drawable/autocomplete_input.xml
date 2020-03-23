@@ -2,4 +2,8 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <corners android:radius="@dimen/sm_padding" />
     <solid android:color="@color/mediumGrey"/>
+    <padding android:bottom="4dp"
+        android:top="4dp"
+        android:left="8dp"
+        android:right="8dp"/>
 </shape>

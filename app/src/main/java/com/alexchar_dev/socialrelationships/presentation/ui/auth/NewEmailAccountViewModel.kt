@@ -8,9 +8,7 @@ import com.alexchar_dev.socialrelationships.domain.usecase.NewEmailAccountCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class NewEmailAccountViewModel(
-    private val newEmailAccountCase: NewEmailAccountCase
-) : ViewModel() {
+class NewEmailAccountViewModel(private val newEmailAccountCase: NewEmailAccountCase) : ViewModel() {
 
     private var _registrationResponse = newEmailAccountCase.observeRegistrationResponse()
     private var _checkUsernameResponse = newEmailAccountCase.observeCheckUsernameResponse()
