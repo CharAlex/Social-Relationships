@@ -23,10 +23,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.new_email_account_fragment.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class SearchFragment : Fragment() {
     private var adapter: UserFirestoreRecyclerAdapter? = null
+    private val viewModel: SearchViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +45,6 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val firestore = FirebaseFirestore.getInstance()
-
         setUpRecyclerView()
 
         usernameSearchAutocomplete.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -58,22 +58,12 @@ class SearchFragment : Fragment() {
                     search_result_recyclerview.hide()
                     return true
                 }
-                //TODO exclude current user username and refactor
-                val usersQuery =
-                    firestore.collection("users").orderBy("username", Query.Direction.ASCENDING)
-                        .startAt(newText).endAt(newText + "\uf8ff").limit(5)
 
-                val users =
-                    FirestoreRecyclerOptions.Builder<User>().setQuery(usersQuery, User::class.java)
-                        .build()
+                viewModel.searchTerm.value = newText
+                val users = viewModel.getUserSearchResult()
 
-                if (adapter == null) {
-                    adapter = UserFirestoreRecyclerAdapter(users)
-                    search_result_recyclerview.adapter = adapter
-                    adapter?.startListening()
-                } else {
-                    adapter?.updateOptions(users)
-                }
+                adapter?.updateOptions(users)
+
 
                 search_result_recyclerview.show()
                 return true
@@ -84,6 +74,9 @@ class SearchFragment : Fragment() {
 
     private fun setUpRecyclerView() {
         search_result_recyclerview.layoutManager = LinearLayoutManager(context)
+        val users = viewModel.getUserSearchResult()
+        adapter = UserFirestoreRecyclerAdapter(users)
+        search_result_recyclerview.adapter = adapter
     }
 
 

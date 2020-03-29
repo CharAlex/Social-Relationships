@@ -9,9 +9,12 @@ import com.google.firebase.auth.FirebaseAuth
 
 class AuthActivity : AppCompatActivity() {
     val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    val TAG = "AuthActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        println("debug: $TAG and $savedInstanceState")
+
         setContentView(R.layout.activity_auth)
 
         if(auth.currentUser != null) {
@@ -19,8 +22,7 @@ class AuthActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
-        if(savedInstanceState == null) {
+        else if(savedInstanceState == null) {
             supportFragmentManager
                 .beginTransaction()
                 .replace(

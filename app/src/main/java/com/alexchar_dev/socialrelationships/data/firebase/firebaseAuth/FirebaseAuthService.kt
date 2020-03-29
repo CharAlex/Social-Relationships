@@ -1,4 +1,4 @@
-package com.alexchar_dev.socialrelationships.data.firebase
+package com.alexchar_dev.socialrelationships.data.firebase.firebaseAuth
 
 import androidx.lifecycle.MutableLiveData
 import com.alexchar_dev.socialrelationships.data.awaitTaskResult

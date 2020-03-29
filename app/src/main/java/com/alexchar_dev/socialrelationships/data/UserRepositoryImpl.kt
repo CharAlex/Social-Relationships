@@ -1,7 +1,7 @@
 package com.alexchar_dev.socialrelationships.data
 
 import androidx.lifecycle.MutableLiveData
-import com.alexchar_dev.socialrelationships.data.firebase.FirebaseAuthService
+import com.alexchar_dev.socialrelationships.data.firebase.firebaseAuth.FirebaseAuthService
 import com.alexchar_dev.socialrelationships.domain.entity.Result
 import com.alexchar_dev.socialrelationships.domain.repository.UserRepository
 

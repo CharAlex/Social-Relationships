@@ -9,9 +9,7 @@ class UserViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
     fun setUsername(username: String, email: String) {
         val userRow = view.findViewById<TextView>(R.id.usernameRow)
-        val emailRow = view.findViewById<TextView>(R.id.emailRow)
         userRow?.text = username
-        emailRow?.text = email
     }
 
 
