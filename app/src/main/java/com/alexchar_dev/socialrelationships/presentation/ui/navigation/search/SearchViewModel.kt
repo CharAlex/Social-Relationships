@@ -15,21 +15,13 @@ import com.google.firebase.firestore.Query
 
 class SearchViewModel(private val searchUseCase: SearchUserCase) : ViewModel()
 {
-    var searchTerm = MutableLiveData<String>()
 
-
-    private val firestore = FirebaseFirestore.getInstance()
-
-    fun getUserSearchResult(): FirestoreRecyclerOptions<User> {
-        val usersQuery =
-            firestore.collection("users").orderBy("username", Query.Direction.ASCENDING)
-                .startAt(searchTerm.value).endAt(searchTerm.value + "\uf8ff").limit(5)
-
-        if(searchTerm.value.isNullOrBlank()) return FirestoreRecyclerOptions.Builder<User>().setSnapshotArray(
-            EmptySnapshotArray()
-        ).build()
-        return FirestoreRecyclerOptions.Builder<User>().setQuery(usersQuery, User::class.java).build()
+    fun getUserSearchResult(searchTerm: String?): FirestoreRecyclerOptions<User> {
+        return searchUseCase.getUserSearchResult(searchTerm)
     }
 
+    fun sendFriendRequest(userId: String?) {
+        searchUseCase.sendFriendRequest(userId)
+    }
 }
 

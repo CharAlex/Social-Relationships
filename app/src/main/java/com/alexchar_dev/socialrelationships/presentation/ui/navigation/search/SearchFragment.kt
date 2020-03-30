@@ -15,12 +15,15 @@ import com.alexchar_dev.socialrelationships.domain.entity.User
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.MainActivity
 import com.alexchar_dev.socialrelationships.presentation.utils.UserNameInputFilter
 import com.alexchar_dev.socialrelationships.presentation.utils.hide
+import com.alexchar_dev.socialrelationships.presentation.utils.makeToast
 import com.alexchar_dev.socialrelationships.presentation.utils.show
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.new_email_account_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -59,8 +62,7 @@ class SearchFragment : Fragment() {
                     return true
                 }
 
-                viewModel.searchTerm.value = newText
-                val users = viewModel.getUserSearchResult()
+                val users = viewModel.getUserSearchResult(newText)
 
                 adapter?.updateOptions(users)
 
@@ -74,8 +76,13 @@ class SearchFragment : Fragment() {
 
     private fun setUpRecyclerView() {
         search_result_recyclerview.layoutManager = LinearLayoutManager(context)
-        val users = viewModel.getUserSearchResult()
-        adapter = UserFirestoreRecyclerAdapter(users)
+        val currentUserId = FirebaseAuth.getInstance().currentUser!!.uid
+        val users = viewModel.getUserSearchResult(null)
+        //lamda function as last parameter for click listener
+        adapter = UserFirestoreRecyclerAdapter(users, currentUserId){ user ->
+            println("debug: ${user.userId}")
+            viewModel.sendFriendRequest(user.userId)
+        }
         search_result_recyclerview.adapter = adapter
     }
 
@@ -94,4 +101,6 @@ class SearchFragment : Fragment() {
         super.onPause()
         adapter?.stopListening()
     }
+
+
 }
