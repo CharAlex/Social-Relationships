@@ -100,7 +100,25 @@ class AuthHomeFragment : Fragment() {
 
         }
 
+        logInPromptBtn.setOnClickListener(listener)
 
+    }
+
+
+
+    private val listener = View.OnClickListener { view ->
+        when(view.id) {
+            R.id.logInPromptBtn -> {
+                parentFragmentManager
+                    .beginTransaction()
+                    .replace(
+                        R.id.fragment_container,
+                        LogInFragment()
+                    )
+                    .addToBackStack(LogInFragment().tag)
+                    .commit()
+            }
+        }
     }
 
     private fun completeRegistrationFragment() {
@@ -108,9 +126,9 @@ class AuthHomeFragment : Fragment() {
             .beginTransaction()
             .replace(
                 R.id.fragment_container,
-                NewEmailAccountFragment.newInstance(user_email?.text.toString())
+                SignUpFragment.newInstance(user_email?.text.toString())
             )
-            .addToBackStack(NewEmailAccountFragment().tag)
+            .addToBackStack(SignUpFragment().tag)
             .commit()
     }
 

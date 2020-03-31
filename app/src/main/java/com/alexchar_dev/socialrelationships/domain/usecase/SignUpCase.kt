@@ -1,11 +1,10 @@
 package com.alexchar_dev.socialrelationships.domain.usecase
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.alexchar_dev.socialrelationships.domain.repository.UserRepository
 
 
-class NewEmailAccountCaseImpl(private val userRepository: UserRepository) : NewEmailAccountCase {
+class SignUpCaseImpl(private val userRepository: UserRepository) : SignUpCase {
 
     override fun createUserWithEmail(email: String, password: String, username: String) {
         userRepository.createUserWithEmail(email, password, username)
@@ -24,7 +23,7 @@ class NewEmailAccountCaseImpl(private val userRepository: UserRepository) : NewE
     }
 }
 
-interface NewEmailAccountCase {
+interface SignUpCase {
     fun createUserWithEmail(email: String, password: String, username: String)
     fun observeRegistrationResponse() : MutableLiveData<Boolean>
     fun observeCheckUsernameResponse() : MutableLiveData<Boolean>

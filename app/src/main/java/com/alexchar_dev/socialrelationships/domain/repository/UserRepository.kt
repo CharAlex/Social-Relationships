@@ -14,4 +14,5 @@ interface UserRepository {
     fun isUsernameTaken(username: String)
     fun  getUserSearchResult(searchTerm: String?) : FirestoreRecyclerOptions<User>
     fun sendFriendRequest(userId: String?)
+    fun logIn(email: String, password: String) : MutableLiveData<Boolean>
 }

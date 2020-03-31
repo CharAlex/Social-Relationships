@@ -31,9 +31,9 @@ import kotlin.concurrent.schedule
 private const val ARG_PARAM1 = "userEmail"
 private var Email: String? = null
 
-class NewEmailAccountFragment : Fragment() {
+class SignUpFragment : Fragment() {
 
-    private val viewModel: NewEmailAccountViewModel by viewModel()
+    private val viewModel: SignUpViewModel by viewModel()
     private var wasUsernameInvalid = false
     var timer = Timer()
     private var isUsernameAvailable : Boolean? = null
@@ -149,7 +149,7 @@ class NewEmailAccountFragment : Fragment() {
         username.setCompoundDrawables(null, null, icon, null)
     }
 
-    private fun startMainActivity() {
+    private fun startMainActivity() { //TODO or call auth activity
         activity?.let {
             val intent = Intent(it, MainActivity::class.java)
             it.startActivity(intent)
@@ -294,7 +294,7 @@ class NewEmailAccountFragment : Fragment() {
     companion object {
 
         @JvmStatic
-        fun newInstance(param1: String) = NewEmailAccountFragment().apply {
+        fun newInstance(param1: String) = SignUpFragment().apply {
             arguments = Bundle().apply {
                 putString(ARG_PARAM1, param1)
             }

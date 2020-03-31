@@ -21,6 +21,20 @@ class FirebaseAuthService {
         var count = 0
     }
 
+    fun logIn(email: String, password: String) : MutableLiveData<Boolean> {
+        val result: MutableLiveData<Boolean> = MutableLiveData()
+
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+            if(task.isSuccessful) {
+                result.postValue(true)
+            } else {
+                result.postValue(false)
+            }
+        }
+
+        return result
+    }
+
     fun createFirebaseUser(email: String, password: String, username: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->

@@ -7,11 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.alexchar_dev.socialrelationships.R
-import com.alexchar_dev.socialrelationships.presentation.ui.auth.NewEmailAccountFragment
-import com.alexchar_dev.socialrelationships.presentation.ui.navigation.MainActivity
-import com.alexchar_dev.socialrelationships.presentation.ui.navigation.search.SearchFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_auth_home.*
 import kotlinx.android.synthetic.main.fragment_home.*
 
 /**

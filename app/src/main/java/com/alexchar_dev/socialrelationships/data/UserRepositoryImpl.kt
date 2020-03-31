@@ -39,4 +39,8 @@ class UserRepositoryImpl(
     override fun sendFriendRequest(userId: String?) {
         firestoreService.sendFriendRequest(userId)
     }
+
+    override fun logIn(email: String, password: String) : MutableLiveData<Boolean> {
+        return firebaseAuthService.logIn(email, password)
+    }
 }
