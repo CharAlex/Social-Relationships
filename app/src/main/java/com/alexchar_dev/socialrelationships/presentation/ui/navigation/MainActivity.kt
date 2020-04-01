@@ -2,20 +2,19 @@ package com.alexchar_dev.socialrelationships.presentation.ui.navigation
 
 import android.os.Bundle
 import android.util.SparseArray
-import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.alexchar_dev.socialrelationships.R
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.home.HomeFragment
-import com.alexchar_dev.socialrelationships.presentation.ui.navigation.notification.NotificationFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.profile.ProfileFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.search.SearchFragment
 import com.alexchar_dev.socialrelationships.presentation.utils.NavigationStack
-import com.alexchar_dev.socialrelationships.presentation.utils.attachFragment
-import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -38,8 +37,30 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         bottomNavigationView.setOnNavigationItemSelectedListener(fragmentSwapNavigationItemSelectedListener)
+        observeFriendRequest()
     }
 
+    private fun observeFriendRequest() {
+        val firestore = FirebaseFirestore.getInstance()
+        val auth = FirebaseAuth.getInstance()
+        val currentUserId = auth.currentUser!!.uid
+        //changed in database to users/requests
+        firestore.collection("users").whereEqualTo("userId", currentUserId).addSnapshotListener { snapshots, exception ->
+            if(exception != null) {
+                println("debug: exception occured: $exception")
+                return@addSnapshotListener
+            }
+
+            for(dc in snapshots!!.documentChanges){
+                if(dc.type == DocumentChange.Type.MODIFIED) {
+                    val requestIds = dc.document.get("requestIds") as List<*>
+                    for(request in requestIds) {
+                        Toast.makeText(this, "User $request added you!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
 
 
     private val fragmentSwapNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->

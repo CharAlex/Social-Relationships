@@ -29,13 +29,10 @@ class UserFirestoreRecyclerAdapter(
 
     override fun onBindViewHolder(userViewHolder: UserViewHolder, position: Int, user: User) {
 
-        if (position == currentUserPosition) { //on the next search performed if there is a user in hided current user position then show the user
-            userViewHolder.itemView.layoutParams = RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
-            )
-            currentUserPosition = -1
-        }
+        userViewHolder.itemView.layoutParams = RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.MATCH_PARENT,
+            RelativeLayout.LayoutParams.WRAP_CONTENT
+        )
 
         if (user.userId == currentUserId) { //hide currentUser
             userViewHolder.itemView.layoutParams.height = 0
@@ -72,6 +69,7 @@ class UserFirestoreRecyclerAdapter(
 
         private fun setUsername(username: String, email: String) {
             val userRow = view.findViewById<TextView>(R.id.usernameRow)
+            val height = userRow.height
             userRow?.text = username
         }
 
