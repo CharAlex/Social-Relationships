@@ -12,7 +12,7 @@ interface UserRepository {
     fun observeCheckUsernameResponse() : MutableLiveData<Boolean>
     suspend fun isEmailValid(email: String) : Result<Boolean>
     fun isUsernameTaken(username: String)
-    fun  getUserSearchResult(searchTerm: String?) : FirestoreRecyclerOptions<User>
+    fun getUserSearchResult(searchTerm: String?) : FirestoreRecyclerOptions<User>
     fun sendFriendRequest(userId: String?)
     fun logIn(email: String, password: String) : MutableLiveData<Boolean>
 }

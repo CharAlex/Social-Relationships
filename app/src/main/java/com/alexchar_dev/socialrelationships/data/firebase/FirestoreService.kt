@@ -17,9 +17,7 @@ class FirestoreService {
             return FirestoreRecyclerOptions.Builder<User>().setSnapshotArray(EmptySnapshotArray()).build()
 
         val usersQuery =
-            firestore.collection("users").orderBy("username", Query.Direction.ASCENDING)
-                .startAt(searchTerm).endAt(searchTerm + "\uf8ff").limit(5)
-
+            firestore.collection("users").orderBy("username", Query.Direction.ASCENDING).startAt(searchTerm).endAt(searchTerm + "\uf8ff").limit(5)
 
         return FirestoreRecyclerOptions.Builder<User>().setQuery(usersQuery, User::class.java).build()
     }

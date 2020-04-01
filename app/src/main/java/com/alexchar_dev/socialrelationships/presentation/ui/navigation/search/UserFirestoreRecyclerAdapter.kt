@@ -6,25 +6,56 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.Button
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.alexchar_dev.socialrelationships.R
 import com.alexchar_dev.socialrelationships.domain.entity.User
+import com.alexchar_dev.socialrelationships.presentation.utils.hide
+import com.alexchar_dev.socialrelationships.presentation.utils.show
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.button.MaterialButton
+import kotlinx.android.synthetic.main.fragment_log_in.view.*
+import kotlinx.android.synthetic.main.new_email_account_fragment.view.*
 import kotlinx.android.synthetic.main.user_item.view.*
 
-class UserFirestoreRecyclerAdapter (users: FirestoreRecyclerOptions<User>, private val currentUserId: String, private val listener: (User) -> Unit) : FirestoreRecyclerAdapter<User, UserFirestoreRecyclerAdapter.UserViewHolder>(users) {
+class UserFirestoreRecyclerAdapter(
+    users: FirestoreRecyclerOptions<User>,
+    private val currentUserId: String,
+    private val listener: (User) -> Unit
+) : FirestoreRecyclerAdapter<User, UserFirestoreRecyclerAdapter.UserViewHolder>(users) {
+
+    var currentUserPosition = -1
+
     override fun onBindViewHolder(userViewHolder: UserViewHolder, position: Int, user: User) {
-        if(user.requestIds.contains(currentUserId)) {
+
+        if (position == currentUserPosition) { //on the next search performed if there is a user in hided current user position then show the user
+            userViewHolder.itemView.layoutParams = RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+            )
+            currentUserPosition = -1
+        }
+
+        if (user.userId == currentUserId) { //hide currentUser
+            userViewHolder.itemView.layoutParams.height = 0
+            currentUserPosition = position
+        }
+
+
+        if (user.requestIds.contains(currentUserId)) {
             userViewHolder.itemView.addUserBtn.text = "Sent"
         } else {
             userViewHolder.itemView.addUserBtn.text = "Add"
         }
         userViewHolder.bind(user, listener)
+    }
+
+    override fun onViewAttachedToWindow(holder: UserViewHolder) {
+        if (holder.itemView.usernameRow.equals("alex_charantzidis")) {
+            holder.itemView.layoutParams.height = 0
+        }
+        super.onViewAttachedToWindow(holder)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
@@ -44,26 +75,11 @@ class UserFirestoreRecyclerAdapter (users: FirestoreRecyclerOptions<User>, priva
             userRow?.text = username
         }
 
-        fun bind(user: User, listener: (User) -> Unit)
-        {
+        fun bind(user: User, listener: (User) -> Unit) {
             setUsername(user.username, user.email)
             view.addUserBtn.setOnClickListener {//TODO if the user that was just added and all the previous users that contains the current logged in user in their requestIds field then show the different button
                 listener(user)
             }
         }
-
-//        private fun changeButtonUI() {
-//            val button = (view.addUserBtn as MaterialButton)
-//            button.text = "Added"
-//            button.apply {
-//                text = "Added"
-//                setIconTintResource(R.color.buttonPrimaryBlue)
-//            }
-//            button.icon = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-//                view.context.resources.getDrawable(R.drawable.ic_check)
-//            } else {
-//                view.context.resources.getDrawable(R.drawable.ic_check, null);
-//            }
-//        }
     }
 }

@@ -61,11 +61,11 @@ class SearchFragment : Fragment() {
                     search_result_recyclerview.hide()
                     return true
                 }
+//                if(newText.length > 2) { }
 
                 val users = viewModel.getUserSearchResult(newText)
 
                 adapter?.updateOptions(users)
-
 
                 search_result_recyclerview.show()
                 return true
