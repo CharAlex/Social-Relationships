@@ -11,6 +11,7 @@ import com.alexchar_dev.socialrelationships.R
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.home.HomeFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.notification.NotificationFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.profile.ProfileFragment
+import com.alexchar_dev.socialrelationships.presentation.ui.navigation.requests.FriendRequestFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.search.SearchFragment
 import com.alexchar_dev.socialrelationships.presentation.utils.NavigationStack
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -76,9 +77,9 @@ class MainActivity : AppCompatActivity() {
     private fun computeNotificationBadge(count: Int) {
         val menu = bottomNavigationView.menu
 
-        menu.findItem(R.id.notification_nav).setIcon(R.drawable.ic_notifications_active)
+        menu.findItem(R.id.request_nav).setIcon(R.drawable.ic_people)
 
-        bottomNavigationView.getOrCreateBadge(R.id.notification_nav).apply {
+        bottomNavigationView.getOrCreateBadge(R.id.request_nav).apply {
             backgroundColor = Color.RED
             badgeTextColor = Color.WHITE
             maxCharacterCount = 3
@@ -93,12 +94,16 @@ class MainActivity : AppCompatActivity() {
         navigationStack.push(item.itemId)
 
         when(item.itemId) {
-            R.id.home_nav -> {
-                swapFragments(item.itemId, "Home")
+            R.id.request_nav -> {
+                swapFragments(item.itemId, "Request")
                 return@OnNavigationItemSelectedListener true
             }
             R.id.search_nav -> {
                 swapFragments(item.itemId, "Search")
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.home_nav -> {
+                swapFragments(item.itemId, "Home")
                 return@OnNavigationItemSelectedListener true
             }
             R.id.notification_nav -> {
@@ -123,11 +128,14 @@ class MainActivity : AppCompatActivity() {
     private fun createFragment(key: String, itemId: Int) {
         var fragment: Fragment = Fragment()
         when (key) {
-            "Home" -> {
-                fragment = HomeFragment()
+            "Request" -> {
+                fragment = FriendRequestFragment()
             }
             "Search" -> {
                 fragment = SearchFragment()
+            }
+            "Home" -> {
+                fragment = HomeFragment()
             }
             "Notification" -> {
                 fragment = NotificationFragment()

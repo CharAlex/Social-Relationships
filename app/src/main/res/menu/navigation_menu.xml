@@ -3,6 +3,9 @@
     <item android:id="@+id/home_nav"
         android:title="Home"
         android:icon="@drawable/ic_home"/>
+    <item android:id="@+id/request_nav"
+        android:title="Friend requests"
+        android:icon="@drawable/ic_people_outline"/>
     <item android:id="@+id/search_nav"
         android:title="Search"
         android:icon="@drawable/ic_search"/>

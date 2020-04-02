@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.alexchar_dev.socialrelationships.data.firebase.FirestoreService
 import com.alexchar_dev.socialrelationships.data.firebase.firebaseAuth.FirebaseAuthService
+import com.alexchar_dev.socialrelationships.domain.entity.FriendRequest
 import com.alexchar_dev.socialrelationships.domain.entity.Result
 import com.alexchar_dev.socialrelationships.domain.entity.User
 import com.alexchar_dev.socialrelationships.domain.repository.UserRepository
@@ -35,6 +36,10 @@ class UserRepositoryImpl(
 
     override fun getUserSearchResult(searchTerm: String?): FirestoreRecyclerOptions<User> {
         return firestoreService.getUserSearchResult(searchTerm)
+    }
+
+    override fun getFriendRequests(): FirestoreRecyclerOptions<FriendRequest> {
+        return firestoreService.getFriendRequests()
     }
 
     override suspend fun sendFriendRequest(userId: String?) : LiveData<Boolean> {

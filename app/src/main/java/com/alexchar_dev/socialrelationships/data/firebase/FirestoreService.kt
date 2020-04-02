@@ -1,6 +1,7 @@
 package com.alexchar_dev.socialrelationships.data.firebase
 
 import androidx.lifecycle.MutableLiveData
+import com.alexchar_dev.socialrelationships.domain.entity.FriendRequest
 import com.alexchar_dev.socialrelationships.domain.entity.User
 import com.alexchar_dev.socialrelationships.presentation.utils.EmptySnapshotArray
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -23,6 +24,14 @@ class FirestoreService {
             firestore.collection("users").orderBy("username", Query.Direction.ASCENDING).startAt(searchTerm).endAt(searchTerm + "\uf8ff").limit(5)
 
         return FirestoreRecyclerOptions.Builder<User>().setQuery(usersQuery, User::class.java).build()
+    }
+
+    fun getFriendRequests() : FirestoreRecyclerOptions<FriendRequest> {
+        if(curUserId != null) {
+            val requestsQuery = firestore.collection("users").document(curUserId).collection("requests").orderBy("timestamp", Query.Direction.ASCENDING)
+            return FirestoreRecyclerOptions.Builder<FriendRequest>().setQuery(requestsQuery, FriendRequest::class.java).build()
+        }
+        return FirestoreRecyclerOptions.Builder<FriendRequest>().setSnapshotArray(EmptySnapshotArray()).build()
     }
 
     suspend fun sendFriendRequest(userId: String?): MutableLiveData<Boolean> {
