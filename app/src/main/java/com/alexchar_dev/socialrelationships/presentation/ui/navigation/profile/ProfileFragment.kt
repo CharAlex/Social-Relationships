@@ -57,7 +57,7 @@ class ProfileFragment : Fragment() {
         //temp
         log_out_button.setOnClickListener {
             val auth = FirebaseAuth.getInstance()
-            auth.signOut()
+            auth.signOut() //TODO keeps user loged in
             val intent = Intent(activity, AuthActivity::class.java)
             startActivity(intent)
             activity?.finish()

@@ -39,20 +39,15 @@ class UserFirestoreRecyclerAdapter(
             currentUserPosition = position
         }
 
-
         if (user.requestIds.contains(currentUserId)) {
-            userViewHolder.itemView.addUserBtn.text = "Sent"
+            userViewHolder.itemView.addUserBtn.apply {
+                text = "Sent"
+                isEnabled = false
+            }
         } else {
             userViewHolder.itemView.addUserBtn.text = "Add"
         }
         userViewHolder.bind(user, listener)
-    }
-
-    override fun onViewAttachedToWindow(holder: UserViewHolder) {
-        if (holder.itemView.usernameRow.equals("alex_charantzidis")) {
-            holder.itemView.layoutParams.height = 0
-        }
-        super.onViewAttachedToWindow(holder)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {

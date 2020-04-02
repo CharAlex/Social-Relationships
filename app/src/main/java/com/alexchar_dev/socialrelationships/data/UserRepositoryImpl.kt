@@ -1,5 +1,6 @@
 package com.alexchar_dev.socialrelationships.data
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.alexchar_dev.socialrelationships.data.firebase.FirestoreService
 import com.alexchar_dev.socialrelationships.data.firebase.firebaseAuth.FirebaseAuthService
@@ -36,8 +37,8 @@ class UserRepositoryImpl(
         return firestoreService.getUserSearchResult(searchTerm)
     }
 
-    override fun sendFriendRequest(userId: String?) {
-        firestoreService.sendFriendRequest(userId)
+    override suspend fun sendFriendRequest(userId: String?) : LiveData<Boolean> {
+        return firestoreService.sendFriendRequest(userId)
     }
 
     override fun logIn(email: String, password: String) : MutableLiveData<Boolean> {

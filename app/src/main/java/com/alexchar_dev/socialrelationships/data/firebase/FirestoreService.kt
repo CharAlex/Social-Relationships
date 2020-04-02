@@ -1,5 +1,6 @@
 package com.alexchar_dev.socialrelationships.data.firebase
 
+import androidx.lifecycle.MutableLiveData
 import com.alexchar_dev.socialrelationships.domain.entity.User
 import com.alexchar_dev.socialrelationships.presentation.utils.EmptySnapshotArray
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -7,10 +8,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.tasks.await
 
 class FirestoreService {
     private val firestore = FirebaseFirestore.getInstance()
     private val firebase = FirebaseAuth.getInstance()
+    val curUserId = firebase.currentUser?.uid
 
     fun getUserSearchResult(searchTerm: String?): FirestoreRecyclerOptions<User> {
         if(searchTerm.isNullOrBlank())
@@ -22,23 +25,62 @@ class FirestoreService {
         return FirestoreRecyclerOptions.Builder<User>().setQuery(usersQuery, User::class.java).build()
     }
 
-    fun sendFriendRequest(userId: String?): Boolean {
-        val curUserId = firebase.currentUser!!.uid
-        if (userId.isNullOrBlank())
-            return false
-        val request = hashMapOf<String,String>(
-            "avatar" to "default/path",
-            "uid" to curUserId
-        )
-        firestore.collection("users").document(userId).update("requestIds", FieldValue.arrayUnion(curUserId)).addOnCompleteListener { task ->
-            if(task.isSuccessful) {
-                println("debug: friend request sent")
-            } else {
+    suspend fun sendFriendRequest(userId: String?): MutableLiveData<Boolean> {
+        val user = getCurrentUser()
+        val result: MutableLiveData<Boolean> = MutableLiveData()
 
-                println("debug: something went wrong ${task.result}")
+        if (user != null && curUserId != null) {
+            if (userId.isNullOrBlank()) {
+                result.postValue(false)
+                return result
             }
+
+            val request = hashMapOf(
+                "avatar" to "default/path",
+                "uid" to curUserId,
+                "username" to user.username,
+                "seen" to false,
+                "timestamp" to FieldValue.serverTimestamp()
+            )
+
+            val userDocResult = addFriendIdToUserDoc(userId)
+
+            if(!userDocResult) {
+                result.value = false
+                return result
+            }
+
+            firestore.collection("users").document(userId).collection("requests")
+                .document(curUserId).set(
+                    request
+                ).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        result.postValue(true)
+                    } else {
+                        result.postValue(false)
+                    }
+                }
+
         }
-        //temp
-        return true
+        return result
+    }
+
+    private suspend fun addFriendIdToUserDoc(userId: String) : Boolean{
+        var result: Boolean = false
+        firestore.collection("users").document(userId).update("requestIds", FieldValue.arrayUnion(curUserId)).addOnCompleteListener { task ->
+            result = task.isSuccessful
+        }.await()
+        return result
+    }
+
+    private suspend fun getCurrentUser() : User? {
+        var user: User? = null
+
+        if(curUserId != null)
+        firestore.collection("users").document(curUserId).get().addOnSuccessListener {
+            user = it.toObject(User::class.java)
+        }.await()
+        println("debug: the user ${user?.username}")
+        return user
     }
 }

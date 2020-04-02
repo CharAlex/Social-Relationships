@@ -1,8 +1,6 @@
 package com.alexchar_dev.socialrelationships.presentation.ui.navigation.search
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.alexchar_dev.socialrelationships.domain.entity.User
 import com.alexchar_dev.socialrelationships.domain.usecase.SearchUserCase
 import com.alexchar_dev.socialrelationships.presentation.utils.EmptySnapshotArray
@@ -12,6 +10,7 @@ import com.firebase.ui.firestore.SnapshotParser
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.launch
 
 class SearchViewModel(private val searchUseCase: SearchUserCase) : ViewModel()
 {
@@ -20,8 +19,9 @@ class SearchViewModel(private val searchUseCase: SearchUserCase) : ViewModel()
         return searchUseCase.getUserSearchResult(searchTerm)
     }
 
-    fun sendFriendRequest(userId: String?) {
-        searchUseCase.sendFriendRequest(userId)
+    fun sendFriendRequest(userId: String?) = liveData {
+        emitSource(searchUseCase.sendFriendRequest(userId))
     }
+
 }
 

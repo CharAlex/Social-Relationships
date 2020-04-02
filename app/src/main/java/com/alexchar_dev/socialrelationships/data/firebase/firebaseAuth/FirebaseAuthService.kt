@@ -28,6 +28,7 @@ class FirebaseAuthService {
             if(task.isSuccessful) {
                 result.postValue(true)
             } else {
+                println("debug: ${task.result}")
                 result.postValue(false)
             }
         }

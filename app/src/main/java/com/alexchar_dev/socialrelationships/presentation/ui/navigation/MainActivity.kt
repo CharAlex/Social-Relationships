@@ -1,5 +1,6 @@
 package com.alexchar_dev.socialrelationships.presentation.ui.navigation
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.SparseArray
 import android.widget.Toast
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.alexchar_dev.socialrelationships.R
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.home.HomeFragment
+import com.alexchar_dev.socialrelationships.presentation.ui.navigation.notification.NotificationFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.profile.ProfileFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.search.SearchFragment
 import com.alexchar_dev.socialrelationships.presentation.utils.NavigationStack
@@ -22,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private var savedStateSparseArray = SparseArray<Fragment.SavedState>()
     private var currentSelectItemId = R.id.home_nav
     var fragment: Fragment? = null
+    var friendRequests = 0 //TODO move to viewmodel
 
     companion object {
         val navigationStack = NavigationStack()
@@ -41,29 +44,52 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeFriendRequest() {
+//        TODO move from here
         val firestore = FirebaseFirestore.getInstance()
         val auth = FirebaseAuth.getInstance()
         val currentUserId = auth.currentUser!!.uid
-        //changed in database to users/requests
-        firestore.collection("users").whereEqualTo("userId", currentUserId).addSnapshotListener { snapshots, exception ->
-            if(exception != null) {
-                println("debug: exception occured: $exception")
-                return@addSnapshotListener
-            }
 
-            for(dc in snapshots!!.documentChanges){
-                if(dc.type == DocumentChange.Type.MODIFIED) {
-                    val requestIds = dc.document.get("requestIds") as List<*>
-                    for(request in requestIds) {
-                        Toast.makeText(this, "User $request added you!", Toast.LENGTH_SHORT).show()
+        firestore.collection("users").document(currentUserId).collection("requests").whereEqualTo("seen", false)
+            .addSnapshotListener { snapshots, exception ->
+                if (exception != null) {
+                    println("debug: listen:error $exception")
+                    return@addSnapshotListener
+                }
+
+                for (dc in snapshots!!.documentChanges) {
+                    when (dc.type) {
+
+                        DocumentChange.Type.ADDED -> {
+                            computeNotificationBadge(++friendRequests)
+                        }
+                        DocumentChange.Type.MODIFIED -> Toast.makeText(this,"friend modified request!", Toast.LENGTH_SHORT).show()
+                        DocumentChange.Type.REMOVED -> if(--friendRequests > 0 ) computeNotificationBadge(--friendRequests) else removeNotificationBadge()
                     }
                 }
             }
+    }
+
+    private fun removeNotificationBadge() {
+        bottomNavigationView.removeBadge(R.id.notification_nav)
+    }
+
+    private fun computeNotificationBadge(count: Int) {
+        val menu = bottomNavigationView.menu
+
+        menu.findItem(R.id.notification_nav).setIcon(R.drawable.ic_notifications_active)
+
+        bottomNavigationView.getOrCreateBadge(R.id.notification_nav).apply {
+            backgroundColor = Color.RED
+            badgeTextColor = Color.WHITE
+            maxCharacterCount = 3
+            number = count
+            isVisible = true
         }
     }
 
 
     private val fragmentSwapNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+
         navigationStack.push(item.itemId)
 
         when(item.itemId) {
@@ -76,6 +102,7 @@ class MainActivity : AppCompatActivity() {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.notification_nav -> {
+                swapFragments(item.itemId, "Notification")
                 return@OnNavigationItemSelectedListener true
             }
             R.id.profile_nav -> {
@@ -101,6 +128,9 @@ class MainActivity : AppCompatActivity() {
             }
             "Search" -> {
                 fragment = SearchFragment()
+            }
+            "Notification" -> {
+                fragment = NotificationFragment()
             }
             "Profile" -> {
                 fragment = ProfileFragment()

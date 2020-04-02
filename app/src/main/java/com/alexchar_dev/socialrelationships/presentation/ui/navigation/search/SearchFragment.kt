@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alexchar_dev.socialrelationships.R
@@ -78,14 +79,21 @@ class SearchFragment : Fragment() {
         search_result_recyclerview.layoutManager = LinearLayoutManager(context)
         val currentUserId = FirebaseAuth.getInstance().currentUser!!.uid
         val users = viewModel.getUserSearchResult(null)
+
         //lamda function as last parameter for click listener
-        adapter = UserFirestoreRecyclerAdapter(users, currentUserId){ user ->
-            println("debug: ${user.userId}")
-            viewModel.sendFriendRequest(user.userId)
+        adapter = UserFirestoreRecyclerAdapter(users, currentUserId) { user ->
+            viewModel.sendFriendRequest(user.userId).observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+                if (it == true) {
+                    makeToast("request sent")
+                } else if (it == false)
+                {
+                    makeToast("something went wrong")
+                }
+
+            })
         }
         search_result_recyclerview.adapter = adapter
     }
-
 
     override fun onStop() {
         super.onStop()

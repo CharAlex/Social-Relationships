@@ -1,5 +1,6 @@
 package com.alexchar_dev.socialrelationships.domain.usecase
 
+import androidx.lifecycle.LiveData
 import com.alexchar_dev.socialrelationships.domain.entity.User
 import com.alexchar_dev.socialrelationships.domain.repository.UserRepository
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -9,13 +10,13 @@ class SearchUserCaseImpl(private val userRepository: UserRepository) : SearchUse
         return userRepository.getUserSearchResult(searchTerm)
     }
 
-    override fun sendFriendRequest(userId: String?) {
-        userRepository.sendFriendRequest(userId)
+    override suspend fun sendFriendRequest(userId: String?) : LiveData<Boolean>{
+        return userRepository.sendFriendRequest(userId)
     }
 
 }
 
 interface SearchUserCase {
     fun getUserSearchResult(searchTerm: String?): FirestoreRecyclerOptions<User>
-    fun sendFriendRequest(userId: String?)
+    suspend fun sendFriendRequest(userId: String?) : LiveData<Boolean>
 }
