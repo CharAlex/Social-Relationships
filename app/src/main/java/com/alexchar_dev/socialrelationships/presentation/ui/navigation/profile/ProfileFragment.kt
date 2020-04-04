@@ -8,26 +8,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.alexchar_dev.socialrelationships.R
 import com.alexchar_dev.socialrelationships.presentation.ui.auth.AuthActivity
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.MainActivity
+import com.alexchar_dev.socialrelationships.presentation.utils.makeToast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_profile.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.ext.getScopeId
 
 
-/**
- * A simple [Fragment] subclass.
- */
 class ProfileFragment : Fragment() {
+    private val viewModel: ProfileViewModel by viewModel()
+
     companion object {
         const val KEY = "FragmentKey"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println("debug: Profile fragment onCreate() called ${getScopeId()}")
     }
 
     override fun onCreateView(
@@ -42,7 +45,7 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        count_tv.text ="0"
+        count_tv.text = "0"
 
         savedInstanceState?.let {
             val savedValue = it.getString(KEY)
@@ -57,10 +60,17 @@ class ProfileFragment : Fragment() {
         //temp
         log_out_button.setOnClickListener {
             val auth = FirebaseAuth.getInstance()
-            auth.signOut() //TODO keeps user loged in
-            val intent = Intent(activity, AuthActivity::class.java)
-            startActivity(intent)
-            activity?.finish()
+
+            viewModel.signOut()
+                .observe(viewLifecycleOwner, androidx.lifecycle.Observer { signOutResult ->
+                    if (signOutResult == true) {
+                        val intent = Intent(activity, AuthActivity::class.java)
+                        startActivity(intent)
+                        activity?.finish()
+                    } else if (signOutResult == false) {
+                        makeToast("Something went wrong")
+                    }
+                })
         }
     }
 

@@ -49,4 +49,20 @@ class UserRepositoryImpl(
     override fun logIn(email: String, password: String) : MutableLiveData<Boolean> {
         return firebaseAuthService.logIn(email, password)
     }
+
+    override fun signOut(): LiveData<Boolean> {
+        return firebaseAuthService.signOut()
+    }
+
+    override fun clearPersistence() {
+        return firebaseAuthService.clearPersistence()
+    }
+
+    override fun acceptFriendRequest(request: FriendRequest): LiveData<Boolean> {
+        return firestoreService.acceptFriendRequest(request)
+    }
+
+    override fun declineFriendRequest(request: FriendRequest): LiveData<Boolean> {
+        return firestoreService.declineFriendRequest(request)
+    }
 }

@@ -52,15 +52,7 @@ class SignUpFragment : Fragment() {
         usernameLayout.error = " " //add empty error to add the appropriate padding
         passwordLayout.error = " "
 
-        viewModel.registrationResponse.observe(viewLifecycleOwner, androidx.lifecycle.Observer { accountCreated ->
-                if (accountCreated == true) {
-                    makeToast("Account Created!")
-                    startMainActivity()
-                } else if (accountCreated == false) {
-                    makeToast("An error occurred during your account setup!")
-                    create_user_button.enable()
-                }
-            })
+        viewModel.registrationResponse
 
         viewModel.checkUsernameResponse.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
                 if (it == false) {

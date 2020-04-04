@@ -13,4 +13,11 @@ class FriendRequestViewModel(private val friendRequestCase: FriendRequestCase) :
         return friendRequestCase.getFriendRequests()
     }
 
+    fun acceptFriendRequest(request: FriendRequest) = liveData<Boolean> {
+        emitSource(friendRequestCase.acceptFriendRequest(request))
+    }
+
+    fun declineFriendRequest(request: FriendRequest) {
+
+    }
 }

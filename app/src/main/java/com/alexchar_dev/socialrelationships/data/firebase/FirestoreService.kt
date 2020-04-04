@@ -1,7 +1,10 @@
 package com.alexchar_dev.socialrelationships.data.firebase
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import com.alexchar_dev.socialrelationships.domain.entity.FriendRequest
+import com.alexchar_dev.socialrelationships.domain.entity.Friendship
 import com.alexchar_dev.socialrelationships.domain.entity.User
 import com.alexchar_dev.socialrelationships.presentation.utils.EmptySnapshotArray
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -51,6 +54,7 @@ class FirestoreService {
                 "seen" to false,
                 "timestamp" to FieldValue.serverTimestamp()
             )
+            //TODO make request obnject and use batch write
 
             val userDocResult = addFriendIdToUserDoc(userId)
 
@@ -91,5 +95,31 @@ class FirestoreService {
         }.await()
         println("debug: the user ${user?.username}")
         return user
+    }
+
+    fun acceptFriendRequest(request: FriendRequest)  = liveData<Boolean> {
+        //first create the collection then delete the request
+        val curFriendship = Friendship(uid = request.uid, username = request.username)
+        val incFriendship = Friendship(uid = curUserId!!, username = getCurrentUser()!!.username)
+
+        var result = false
+        val curRef = firestore.collection("users/$curUserId/friends").document(request.uid)
+        val incRef = firestore.collection("users/${request.uid}/friends").document(curUserId!!)
+        val delRef = firestore.collection("users/$curUserId/requests").document(request.uid)
+
+        firestore.runBatch { batch ->
+            batch.set(curRef, curFriendship) //add friendship document in current user
+            batch.set(incRef, incFriendship) //add friendship document in friend user
+            batch.delete(delRef) //delete request document
+            //TODO remove requestIds array
+        }.addOnCompleteListener {
+            result = true
+        }.await()
+
+        emit(result)
+    }
+
+    fun declineFriendRequest(request: FriendRequest)  = liveData<Boolean> {
+
     }
 }

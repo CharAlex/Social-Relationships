@@ -9,6 +9,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun View.hide() = run { this.visibility = View.GONE }
 fun View.show() = run { this.visibility = View.VISIBLE }
@@ -29,4 +31,9 @@ fun Activity.attachFragment(manager: FragmentManager, containerId: Int, view: Fr
     manager.beginTransaction()
         .replace(containerId, view, tag)
         .commitNowAllowingStateLoss()
+}
+
+fun Date.toSimpleString() : String {
+    val format = SimpleDateFormat("dd/MM/yyy")
+    return format.format(this)
 }

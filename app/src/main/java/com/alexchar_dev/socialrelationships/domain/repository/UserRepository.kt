@@ -17,4 +17,8 @@ interface UserRepository {
     fun getFriendRequests() : FirestoreRecyclerOptions<FriendRequest>
     suspend fun sendFriendRequest(userId: String?) : LiveData<Boolean>
     fun logIn(email: String, password: String) : MutableLiveData<Boolean>
+    fun signOut() : LiveData<Boolean>
+    fun clearPersistence()
+    fun acceptFriendRequest(request: FriendRequest) : LiveData<Boolean>
+    fun declineFriendRequest(request: FriendRequest) : LiveData<Boolean>
 }

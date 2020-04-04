@@ -7,20 +7,20 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.alexchar_dev.socialrelationships.R
 import com.alexchar_dev.socialrelationships.domain.entity.FriendRequest
+import com.alexchar_dev.socialrelationships.presentation.utils.toSimpleString
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import kotlinx.android.synthetic.main.request_item.view.*
-import java.text.SimpleDateFormat
-import java.util.*
 
 class RequestFirestoreRecyclerAdapter(
     requests: FirestoreRecyclerOptions<FriendRequest>,
-    private val handleFriendRequest: (FriendRequest) -> Unit
+    private val acceptFriendRequest: (FriendRequest) -> Unit,
+    private val declineFriendRequest: (FriendRequest) -> Unit
 ) : FirestoreRecyclerAdapter<FriendRequest, RequestFirestoreRecyclerAdapter.RequestViewHolder>(requests) {
 
     override fun onBindViewHolder(holder: RequestViewHolder, position: Int, request: FriendRequest) {
 
-        holder.bind(request, handleFriendRequest)
+        holder.bind(request, acceptFriendRequest, declineFriendRequest)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestViewHolder {
@@ -31,10 +31,10 @@ class RequestFirestoreRecyclerAdapter(
 
     inner class RequestViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
-        fun bind(request: FriendRequest, handleFriendRequest: (FriendRequest) -> Unit) {
+        fun bind(request: FriendRequest, acceptFriendRequest: (FriendRequest) -> Unit, declineFriendRequest : (FriendRequest) -> Unit) {
             setView(request)
-            view.acceptBtn.setOnClickListener{ handleFriendRequest(request)}
-            view.declineBtn.setOnClickListener{ handleFriendRequest(request)}
+            view.acceptBtn.setOnClickListener{ acceptFriendRequest(request)}
+            view.declineBtn.setOnClickListener{ declineFriendRequest(request)}
         }
 
         private fun setView(request: FriendRequest) {
@@ -47,9 +47,4 @@ class RequestFirestoreRecyclerAdapter(
             timestamp.text = request.timestamp.toSimpleString()
         }
     }
-    fun Date.toSimpleString() : String {
-        val format = SimpleDateFormat("dd/MM/yyy")
-        return format.format(this)
-    }
-
 }

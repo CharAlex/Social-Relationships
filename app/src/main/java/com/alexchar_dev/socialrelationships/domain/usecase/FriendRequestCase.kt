@@ -19,10 +19,19 @@ class FriendRequestCaseImpl(private val userRepository: UserRepository) : Friend
         return userRepository.sendFriendRequest(userId)
     }
 
+    override fun acceptFriendRequest(request: FriendRequest): LiveData<Boolean> {
+        return  userRepository.acceptFriendRequest(request)
+    }
+
+    override fun declineFriendRequest(request: FriendRequest): LiveData<Boolean> {
+        return  userRepository.declineFriendRequest(request)
+    }
 }
 
 interface FriendRequestCase {
     fun getUserSearchResult(searchTerm: String?): FirestoreRecyclerOptions<User>
     fun getFriendRequests(): FirestoreRecyclerOptions<FriendRequest>
     suspend fun sendFriendRequest(userId: String?) : LiveData<Boolean>
+    fun acceptFriendRequest(request: FriendRequest) : LiveData<Boolean>
+    fun declineFriendRequest(request: FriendRequest) : LiveData<Boolean>
 }

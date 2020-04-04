@@ -7,25 +7,30 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
 import com.alexchar_dev.socialrelationships.R
+import com.alexchar_dev.socialrelationships.presentation.MainActivityViewModel
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.home.HomeFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.notification.NotificationFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.profile.ProfileFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.requests.FriendRequestFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.search.SearchFragment
 import com.alexchar_dev.socialrelationships.presentation.utils.NavigationStack
+import com.alexchar_dev.socialrelationships.presentation.utils.minus
+import com.alexchar_dev.socialrelationships.presentation.utils.plus
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
     val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var savedStateSparseArray = SparseArray<Fragment.SavedState>()
     private var currentSelectItemId = R.id.home_nav
     var fragment: Fragment? = null
-    var friendRequests = 0 //TODO move to viewmodel
+    private val viewModel: MainActivityViewModel by viewModel()
 
     companion object {
         val navigationStack = NavigationStack()
@@ -42,6 +47,10 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigationView.setOnNavigationItemSelectedListener(fragmentSwapNavigationItemSelectedListener)
         observeFriendRequest()
+
+        viewModel.badgeCount.observe(this, androidx.lifecycle.Observer {
+            setBadgeCount(it)
+        })
     }
 
     private fun observeFriendRequest() {
@@ -61,20 +70,24 @@ class MainActivity : AppCompatActivity() {
                     when (dc.type) {
 
                         DocumentChange.Type.ADDED -> {
-                            computeNotificationBadge(++friendRequests)
+                            viewModel.badgeCount.plus(1)
                         }
                         DocumentChange.Type.MODIFIED -> Toast.makeText(this,"friend modified request!", Toast.LENGTH_SHORT).show()
-                        DocumentChange.Type.REMOVED -> if(--friendRequests > 0 ) computeNotificationBadge(--friendRequests) else removeNotificationBadge()
+                        DocumentChange.Type.REMOVED -> viewModel.badgeCount.minus(1)
                     }
                 }
             }
     }
 
     private fun removeNotificationBadge() {
-        bottomNavigationView.removeBadge(R.id.notification_nav)
+        bottomNavigationView.removeBadge(R.id.request_nav)
     }
 
-    private fun computeNotificationBadge(count: Int) {
+    private fun setBadgeCount(count: Int) {
+        if(count < 1) {
+            removeNotificationBadge()
+            return
+        }
         val menu = bottomNavigationView.menu
 
         menu.findItem(R.id.request_nav).setIcon(R.drawable.ic_people)

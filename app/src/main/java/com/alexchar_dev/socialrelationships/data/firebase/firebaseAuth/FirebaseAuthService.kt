@@ -1,6 +1,8 @@
 package com.alexchar_dev.socialrelationships.data.firebase.firebaseAuth
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import com.alexchar_dev.socialrelationships.data.awaitTaskResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -34,6 +36,15 @@ class FirebaseAuthService {
         }
 
         return result
+    }
+
+    fun signOut() = liveData<Boolean> {
+        auth.signOut()
+        emit(true)
+    }
+
+    fun clearPersistence() {
+        db.clearPersistence()
     }
 
     fun createFirebaseUser(email: String, password: String, username: String) {

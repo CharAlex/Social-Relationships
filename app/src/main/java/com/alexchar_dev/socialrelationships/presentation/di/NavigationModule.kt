@@ -2,6 +2,10 @@ package com.alexchar_dev.socialrelationships.presentation.di
 
 import com.alexchar_dev.socialrelationships.domain.usecase.FriendRequestCase
 import com.alexchar_dev.socialrelationships.domain.usecase.FriendRequestCaseImpl
+import com.alexchar_dev.socialrelationships.domain.usecase.SignOutCase
+import com.alexchar_dev.socialrelationships.domain.usecase.SignOutCaseImpl
+import com.alexchar_dev.socialrelationships.presentation.MainActivityViewModel
+import com.alexchar_dev.socialrelationships.presentation.ui.navigation.profile.ProfileViewModel
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.requests.FriendRequestFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.requests.FriendRequestViewModel
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.search.SearchViewModel
@@ -13,6 +17,10 @@ val navigationModule = module {
         FriendRequestCaseImpl(get())
     }
 
+    single<SignOutCase> { SignOutCaseImpl( get() ) }
+
     viewModel { SearchViewModel( get() ) }
     viewModel { FriendRequestViewModel( get() ) }
+    viewModel { ProfileViewModel( get()) }
+    viewModel { MainActivityViewModel() }
 }

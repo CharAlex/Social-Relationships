@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.alexchar_dev.socialrelationships.R
+import com.alexchar_dev.socialrelationships.domain.entity.FriendRequest
+import com.alexchar_dev.socialrelationships.presentation.MainActivityViewModel
+import com.alexchar_dev.socialrelationships.presentation.utils.minus
 import com.alexchar_dev.socialrelationships.presentation.utils.makeToast
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_friend_request.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -35,10 +37,22 @@ class FriendRequestFragment : Fragment() {
         request_recyclerview.layoutManager = LinearLayoutManager(context)
         val requests = viewModel.getFriendRequests()
 
-        adapter = RequestFirestoreRecyclerAdapter(requests) { request ->
-            println("debug: $request")
-        }
+        adapter = RequestFirestoreRecyclerAdapter(requests, acceptFriendRequest, declineFriendRequest)
         request_recyclerview.adapter = adapter
+    }
+
+    private val acceptFriendRequest : (FriendRequest) -> Unit = { request ->
+        viewModel.acceptFriendRequest(request).observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            if (it == true) {
+                makeToast("${request.username} added!")
+            } else if (it == false){
+                makeToast("something went wrong")
+            }
+        })
+    }
+
+    private val declineFriendRequest : (FriendRequest) -> Unit = {request ->
+        viewModel.declineFriendRequest(request)
     }
 
     override fun onStop() {
