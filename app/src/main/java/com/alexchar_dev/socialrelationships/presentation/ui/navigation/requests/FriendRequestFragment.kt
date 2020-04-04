@@ -52,7 +52,13 @@ class FriendRequestFragment : Fragment() {
     }
 
     private val declineFriendRequest : (FriendRequest) -> Unit = {request ->
-        viewModel.declineFriendRequest(request)
+        viewModel.declineFriendRequest(request).observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            if (it == true) {
+                makeToast("${request.username} declined!")
+            } else if (it == false){
+                makeToast("something went wrong")
+            }
+        })
     }
 
     override fun onStop() {

@@ -106,12 +106,13 @@ class FirestoreService {
         val curRef = firestore.collection("users/$curUserId/friends").document(request.uid)
         val incRef = firestore.collection("users/${request.uid}/friends").document(curUserId!!)
         val delRef = firestore.collection("users/$curUserId/requests").document(request.uid)
+        val additionalDel = firestore.collection("users").document(curUserId)
 
         firestore.runBatch { batch ->
             batch.set(curRef, curFriendship) //add friendship document in current user
             batch.set(incRef, incFriendship) //add friendship document in friend user
             batch.delete(delRef) //delete request document
-            //TODO remove requestIds array
+            batch.update(additionalDel, "requestIds", FieldValue.arrayRemove(request.uid))
         }.addOnCompleteListener {
             result = true
         }.await()
@@ -120,6 +121,18 @@ class FirestoreService {
     }
 
     fun declineFriendRequest(request: FriendRequest)  = liveData<Boolean> {
+        var result = false
 
+        val delRef = firestore.collection("users/$curUserId/requests").document(request.uid)
+        val additionalDel = firestore.collection("users").document(curUserId!!)
+
+        firestore.runBatch { batch ->
+            batch.delete(delRef) //delete request document
+            batch.update(additionalDel, "requestIds", FieldValue.arrayRemove(request.uid))
+        }.addOnCompleteListener {
+            result = true
+        }.await()
+
+        emit(result)
     }
 }
