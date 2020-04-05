@@ -37,6 +37,16 @@ class FirestoreService {
         return FirestoreRecyclerOptions.Builder<FriendRequest>().setSnapshotArray(EmptySnapshotArray()).build()
     }
 
+    suspend fun getFriendRequest(uid: String, followerUid: String): FriendRequest? {
+        var request: FriendRequest? = null
+
+        if(curUserId != null)
+            firestore.collection("users/$curUserId/requests").document(followerUid).get().addOnSuccessListener {
+                request = it.toObject(FriendRequest::class.java)
+            }.await()
+        return request
+    }
+
     suspend fun sendFriendRequest(userId: String?): MutableLiveData<Boolean> {
         val user = getCurrentUser()
         val result: MutableLiveData<Boolean> = MutableLiveData()
@@ -86,7 +96,7 @@ class FirestoreService {
         return result
     }
 
-    private suspend fun getCurrentUser() : User? {
+    suspend fun getCurrentUser() : User? {
         var user: User? = null
 
         if(curUserId != null)
@@ -98,6 +108,7 @@ class FirestoreService {
     }
 
     fun acceptFriendRequest(request: FriendRequest)  = liveData<Boolean> {
+        println("debug: acceptFriendRequest function")
         //first create the collection then delete the request
         val curFriendship = Friendship(uid = request.uid, username = request.username)
         val incFriendship = Friendship(uid = curUserId!!, username = getCurrentUser()!!.username)

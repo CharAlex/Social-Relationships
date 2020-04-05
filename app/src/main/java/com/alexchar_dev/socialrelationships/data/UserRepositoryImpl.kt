@@ -65,4 +65,12 @@ class UserRepositoryImpl(
     override fun declineFriendRequest(request: FriendRequest): LiveData<Boolean> {
         return firestoreService.declineFriendRequest(request)
     }
+
+    override suspend fun getCurrentUser(): User? {
+        return firestoreService.getCurrentUser()
+    }
+
+    override suspend fun getFriendRequest(uid: String, followerUid: String): FriendRequest? {
+        return firestoreService.getFriendRequest(uid, followerUid)
+    }
 }

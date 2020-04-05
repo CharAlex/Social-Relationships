@@ -26,6 +26,14 @@ class FriendRequestCaseImpl(private val userRepository: UserRepository) : Friend
     override fun declineFriendRequest(request: FriendRequest): LiveData<Boolean> {
         return  userRepository.declineFriendRequest(request)
     }
+
+    override suspend fun getCurrentUser(): User? {
+        return userRepository.getCurrentUser()
+    }
+
+    override suspend fun getFriendRequest(uid: String, followerUid: String): FriendRequest? {
+        return userRepository.getFriendRequest(uid, followerUid)
+    }
 }
 
 interface FriendRequestCase {
@@ -34,4 +42,6 @@ interface FriendRequestCase {
     suspend fun sendFriendRequest(userId: String?) : LiveData<Boolean>
     fun acceptFriendRequest(request: FriendRequest) : LiveData<Boolean>
     fun declineFriendRequest(request: FriendRequest) : LiveData<Boolean>
+    suspend fun getCurrentUser(): User?
+    suspend fun getFriendRequest(uid: String, followerUid: String): FriendRequest?
 }
