@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.alexchar_dev.socialrelationships.R
 import com.alexchar_dev.socialrelationships.domain.entity.User
@@ -39,15 +40,32 @@ class UserFirestoreRecyclerAdapter(
             currentUserPosition = position
         }
 
-        if (user.requestIds.contains(currentUserId)) {
-            userViewHolder.itemView.addUserBtn.apply {
-                text = "Sent"
-                isEnabled = false
+        when {
+            user.friendList.contains(currentUserId) -> { //Users are already friends
+                userViewHolder.itemView.friendsBtn.show()
+                userViewHolder.itemView.addUserBtn.hide()
             }
-        } else {
-            userViewHolder.itemView.addUserBtn.text = "Add"
+            user.requestIds.contains(currentUserId) -> { //Request has been sent
+                userViewHolder.itemView.friendsBtn.hide()
+                userViewHolder.itemView.addUserBtn.apply {
+                    show()
+                    text = "sent"
+                    isEnabled = false
+                }
+            }
+            else -> {
+                userViewHolder.itemView.friendsBtn.hide()
+                userViewHolder.itemView.addUserBtn.show()
+                userViewHolder.itemView.addUserBtn.text = "Add"
+            }
         }
+
         userViewHolder.bind(user, listener)
+    }
+
+    private fun toggleFriends(view: View) {
+        if(view.friendsBtn.isVisible) view.friendsBtn.hide() else view.friendsBtn.show()
+        if(view.addUserBtn.isVisible) view.addUserBtn.hide() else view.addUserBtn.show()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
@@ -70,7 +88,7 @@ class UserFirestoreRecyclerAdapter(
 
         fun bind(user: User, listener: (User) -> Unit) {
             setUsername(user.username, user.email)
-            view.addUserBtn.setOnClickListener {//TODO if the user that was just added and all the previous users that contains the current logged in user in their requestIds field then show the different button
+            view.addUserBtn.setOnClickListener {
                 listener(user)
             }
         }

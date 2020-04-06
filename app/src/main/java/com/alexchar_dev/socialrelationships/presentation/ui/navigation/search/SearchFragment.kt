@@ -92,6 +92,7 @@ class SearchFragment : Fragment() {
 
             })
         }
+
         search_result_recyclerview.adapter = adapter
     }
 

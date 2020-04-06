@@ -1,6 +1,5 @@
 package com.alexchar_dev.socialrelationships.data.firebase
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import com.alexchar_dev.socialrelationships.domain.entity.FriendRequest
@@ -117,13 +116,19 @@ class FirestoreService {
         val curRef = firestore.collection("users/$curUserId/friends").document(request.uid)
         val incRef = firestore.collection("users/${request.uid}/friends").document(curUserId!!)
         val delRef = firestore.collection("users/$curUserId/requests").document(request.uid)
-        val additionalDel = firestore.collection("users").document(curUserId)
+
+        val curUserRef = firestore.collection("users").document(curUserId)
+        val incUserRef = firestore.collection("users").document(request.uid)
 
         firestore.runBatch { batch ->
             batch.set(curRef, curFriendship) //add friendship document in current user
             batch.set(incRef, incFriendship) //add friendship document in friend user
+
+            batch.update(curUserRef, "friendList", FieldValue.arrayUnion(request.uid)) //add friendId in friendIds in current user
+            batch.update(incUserRef, "friendList", FieldValue.arrayUnion(curUserId)) //add friendId in friendIds in current user
+
             batch.delete(delRef) //delete request document
-            batch.update(additionalDel, "requestIds", FieldValue.arrayRemove(request.uid))
+            batch.update(curUserRef, "requestIds", FieldValue.arrayRemove(request.uid))
         }.addOnCompleteListener {
             result = true
         }.await()
