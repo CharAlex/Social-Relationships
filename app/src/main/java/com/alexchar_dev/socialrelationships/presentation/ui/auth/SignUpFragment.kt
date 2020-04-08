@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -52,7 +53,22 @@ class SignUpFragment : Fragment() {
         usernameLayout.error = " " //add empty error to add the appropriate padding
         passwordLayout.error = " "
 
-        viewModel.registrationResponse
+        viewModel.registrationResponse.observe(
+            viewLifecycleOwner,
+            androidx.lifecycle.Observer { accountCreated ->
+                if (accountCreated == true) {
+                    Toast.makeText(context, "Account Created!", Toast.LENGTH_LONG).show()
+                    //TODO START NEW ACTIVITY
+                    activity?.let {
+                        val intent = Intent(it, MainActivity::class.java)
+                        it.startActivity(intent)
+                        it.finish()
+                    }
+                } else if (accountCreated == false) {
+                    Toast.makeText(context, "An error occurred during your account setup!", Toast.LENGTH_LONG).show()
+                    create_user_button.isEnabled = true
+                }
+            })
 
         viewModel.checkUsernameResponse.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
                 if (it == false) {
@@ -71,7 +87,7 @@ class SignUpFragment : Fragment() {
             create_account_progress_bar.show()
             create_user_button.text = ""
 
-            viewModel.createUser(user_email_display.textToString, password.textToString, username.textToString)
+            viewModel.createUser(user_email_display.textToString, password.textToString, username.textToString) //TODO observe????
         }
 
         username.apply {

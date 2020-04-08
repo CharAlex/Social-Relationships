@@ -20,7 +20,7 @@
         android:text="Friends"
         android:textAllCaps="false"
         android:textColor="@color/buttonPrimaryBlue"
-        android:visibility="visible"
+        android:visibility="gone"
         app:icon="@drawable/ic_people_outline"
         app:iconSize="20dp"
         app:iconTint="@color/buttonPrimaryBlue"
