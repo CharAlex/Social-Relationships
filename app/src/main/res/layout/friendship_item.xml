@@ -4,110 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="@dimen/md_padding"
-    android:background="@drawable/card_background"
-    android:padding="16dp">
+    android:paddingVertical="@dimen/lg_padding">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="3/10"
-        android:textColor="@color/iconGrey"
-        android:textSize="12dp"
-        app:layout_constraintBottom_toBottomOf="@+id/attributeTitle2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/attributeTitle2" />
+    <View
+        android:id="@+id/personal_account"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="@dimen/lg_padding"
+        android:background="@drawable/bg_avatar"
+        android:backgroundTint="@color/colorPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/avatar"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/person_avatar" />
+        android:id="@+id/imageView"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/emoji_avatar"
+        app:layout_constraintBottom_toBottomOf="@+id/personal_account"
+        app:layout_constraintEnd_toEndOf="@+id/personal_account"
+        app:layout_constraintStart_toStartOf="@+id/personal_account"
+        app:layout_constraintTop_toTopOf="@+id/personal_account" />
 
     <TextView
         android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:text="alex_char"
+        android:layout_marginStart="@dimen/lg_padding"
+        android:layout_marginLeft="@dimen/lg_padding"
+        android:includeFontPadding="false"
+        android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/emailRow"
-        app:layout_constraintStart_toEndOf="@+id/avatar"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintStart_toEndOf="@+id/personal_account"
+        app:layout_constraintTop_toTopOf="@+id/personal_account"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="@tools:sample/full_names" />
-
-    <ImageView
-        android:id="@+id/attributeTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        app:srcCompat="@drawable/ic_heart"
-        app:layout_constraintStart_toStartOf="@+id/username"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
-
-    <ProgressBar
-        android:id="@+id/love"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:indeterminate="false"
-        android:max="100"
-        android:progress="80"
-        android:progressDrawable="@drawable/attribute_progress"
-        app:layout_constraintBottom_toBottomOf="@+id/attributeTitle"
-        app:layout_constraintEnd_toStartOf="@+id/textView"
-        app:layout_constraintStart_toEndOf="@+id/attributeTitle"
-        app:layout_constraintTop_toTopOf="@+id/attributeTitle" />
-
-    <ImageView
-        android:id="@+id/attributeTitle2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        app:layout_constraintStart_toStartOf="@+id/attributeTitle"
-        app:layout_constraintTop_toBottomOf="@+id/attributeTitle"
-        app:srcCompat="@drawable/ic_connection" />
-
-    <ProgressBar
-        android:id="@+id/connection"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:indeterminate="false"
-        android:max="100"
-        android:progress="30"
-        android:progressDrawable="@drawable/attribute_progress"
-        android:progressTint="@color/error"
-        app:layout_constraintBottom_toBottomOf="@+id/attributeTitle2"
-        app:layout_constraintEnd_toStartOf="@+id/textView2"
-        app:layout_constraintStart_toEndOf="@+id/attributeTitle2"
-        app:layout_constraintTop_toTopOf="@+id/attributeTitle2" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="8/10"
-        android:textColor="@color/iconGrey"
-        android:textSize="12dp"
-        app:layout_constraintBottom_toBottomOf="@+id/attributeTitle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/attributeTitle" />
+        android:layout_marginStart="@dimen/lg_padding"
+        android:layout_marginLeft="@dimen/lg_padding"
+        android:text="Invite me!"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/personal_account"
+        app:layout_constraintStart_toEndOf="@+id/personal_account"
+        app:layout_constraintTop_toBottomOf="@+id/username" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

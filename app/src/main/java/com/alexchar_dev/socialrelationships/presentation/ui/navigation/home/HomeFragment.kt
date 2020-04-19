@@ -1,18 +1,22 @@
 package com.alexchar_dev.socialrelationships.presentation.ui.navigation.home
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.alexchar_dev.socialrelationships.R
+import com.alexchar_dev.socialrelationships.presentation.utils.OnSwipeTouchListener
 import com.alexchar_dev.socialrelationships.presentation.utils.hide
 import com.alexchar_dev.socialrelationships.presentation.utils.show
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.function.BinaryOperator
 
 
 class HomeFragment : Fragment() {
@@ -42,6 +46,55 @@ class HomeFragment : Fragment() {
             }
         })
 
+        setSliderAnimation()
+    }
+
+    private fun setSliderAnimation() {
+        var sliderOpen = false
+
+        slider_btn.setOnClickListener {
+            sliderOpen = toggleSettingsSlider(sliderOpen)
+        }
+
+        home_constraint.setOnTouchListener(onSwipeTouchListener(sliderOpen))
+        friends_recyclerview.setOnTouchListener(onSwipeTouchListener(sliderOpen))
+    }
+
+    private fun onSwipeTouchListener(sliderOpen: Boolean): OnSwipeTouchListener {
+        var sliderOpen1 = sliderOpen
+        return object : OnSwipeTouchListener(context) {
+            override fun onSwipeRight() {
+                if (sliderOpen1) sliderOpen1 = toggleSettingsSlider(sliderOpen1)
+            }
+
+            override fun onSwipeLeft() {
+                if (!sliderOpen1) sliderOpen1 = toggleSettingsSlider(sliderOpen1)
+            }
+        }
+    }
+
+    private fun toggleSettingsSlider(sliderOpen: Boolean) : Boolean {
+        val width = resources.getDimensionPixelSize(R.dimen.sliderWidth).toFloat()
+        if (sliderOpen) {
+            ObjectAnimator.ofFloat(home_constraint,"translationX", 0f).apply{
+                duration = 200
+                start()
+            }
+            ObjectAnimator.ofFloat(slider,"translationX", 0f).apply{
+                duration = 200
+                start()
+            }
+        } else {
+            ObjectAnimator.ofFloat(home_constraint,"translationX", -width).apply{
+                duration = 200
+                start()
+            }
+            ObjectAnimator.ofFloat(slider,"translationX", -width).apply{
+                duration = 200
+                start()
+            }
+        }
+        return !sliderOpen
     }
 
     private fun setUpRecyclerView() {
@@ -49,6 +102,11 @@ class HomeFragment : Fragment() {
         val friends = viewModel.getFriends()
         adapter = FriendFirestoreRecyclerAdapter(friends)
         friends_recyclerview.adapter = adapter
+        val dividerItemDecoration = DividerItemDecoration(
+            friends_recyclerview.context,
+            LinearLayoutManager.VERTICAL
+        )
+        friends_recyclerview.addItemDecoration(dividerItemDecoration)
     }
 
     override fun onStart() {

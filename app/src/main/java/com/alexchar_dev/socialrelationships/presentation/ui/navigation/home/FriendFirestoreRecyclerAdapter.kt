@@ -8,6 +8,7 @@ import com.alexchar_dev.socialrelationships.R
 import com.alexchar_dev.socialrelationships.domain.entity.Friendship
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import kotlinx.android.synthetic.main.friendship_item.view.*
 
 class FriendFirestoreRecyclerAdapter(
     friends: FirestoreRecyclerOptions<Friendship>
@@ -26,7 +27,7 @@ class FriendFirestoreRecyclerAdapter(
     inner class FriendViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
         fun bind(friend: Friendship) {
-            //TODO bind the data
+            view.username.text = friend.username
         }
 
     }
