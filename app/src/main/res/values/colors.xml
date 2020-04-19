@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FFC400</color>
+    <color name="colorPrimary">#eaa817</color>
     <color name="colorPrimaryDark">#EEEEEE</color>
     <color name="colorAccent">#EEEEEE</color>
     <color name="background">#EDEDEE</color>
@@ -17,5 +17,11 @@
     <color name="facebookPrimary">#3b5998</color>
     <color name="buttonPrimaryBlue">#3897f0</color>
     <color name="buttonPrimaryDisabledBlue">#186DBC</color>
+    <color name="green">#00C853</color>
+    <color name="lightGreen">#AEEA00</color>
+
+    <color name="cardPurple">#fff2f2</color>
+    <color name="cardBorder">#f9c0c0</color>
+
     <color name="transparent">#00FFFFFF</color>
 </resources>

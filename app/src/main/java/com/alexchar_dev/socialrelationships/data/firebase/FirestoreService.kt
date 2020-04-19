@@ -151,4 +151,12 @@ class FirestoreService {
 
         emit(result)
     }
+
+    fun getFriends() : FirestoreRecyclerOptions<Friendship> {
+        if(curUserId != null) {
+            val requestsQuery = firestore.collection("users").document(curUserId).collection("friends").orderBy("username", Query.Direction.ASCENDING)
+            return FirestoreRecyclerOptions.Builder<Friendship>().setQuery(requestsQuery, Friendship::class.java).build()
+        }
+        return FirestoreRecyclerOptions.Builder<Friendship>().setSnapshotArray(EmptySnapshotArray()).build()
+    }
 }
