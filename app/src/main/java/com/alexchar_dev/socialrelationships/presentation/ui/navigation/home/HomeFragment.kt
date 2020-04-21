@@ -22,6 +22,7 @@ import java.util.function.BinaryOperator
 class HomeFragment : Fragment() {
     private val viewModel : HomeViewModel by viewModel()
     private var adapter: FriendFirestoreRecyclerAdapter? = null
+    private var sliderOpen = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,25 +51,23 @@ class HomeFragment : Fragment() {
     }
 
     private fun setSliderAnimation() {
-        var sliderOpen = false
 
         slider_btn.setOnClickListener {
             sliderOpen = toggleSettingsSlider(sliderOpen)
         }
 
-        home_constraint.setOnTouchListener(onSwipeTouchListener(sliderOpen))
-        friends_recyclerview.setOnTouchListener(onSwipeTouchListener(sliderOpen))
+        home_constraint.setOnTouchListener(onSwipeTouchListener())
+        friends_recyclerview.setOnTouchListener(onSwipeTouchListener())
     }
 
-    private fun onSwipeTouchListener(sliderOpen: Boolean): OnSwipeTouchListener {
-        var sliderOpen1 = sliderOpen
+    private fun onSwipeTouchListener(): OnSwipeTouchListener {
         return object : OnSwipeTouchListener(context) {
             override fun onSwipeRight() {
-                if (sliderOpen1) sliderOpen1 = toggleSettingsSlider(sliderOpen1)
+                if (sliderOpen) sliderOpen = toggleSettingsSlider(sliderOpen)
             }
 
             override fun onSwipeLeft() {
-                if (!sliderOpen1) sliderOpen1 = toggleSettingsSlider(sliderOpen1)
+                if (!sliderOpen) sliderOpen = toggleSettingsSlider(sliderOpen)
             }
         }
     }
@@ -118,4 +117,6 @@ class HomeFragment : Fragment() {
         super.onStop()
         adapter?.stopListening()
     }
+
+    //TODO override onSaveInstanceState and save if the sliderOpen is true
 }
