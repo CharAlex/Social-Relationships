@@ -19,8 +19,6 @@ class NotificationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        println("debug: ${MainActivity.navigationStack}")
-
         return inflater.inflate(R.layout.fragment_notification, container, false)
     }
 

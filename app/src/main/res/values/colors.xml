@@ -9,7 +9,7 @@
     <color name="black">#000000</color>
     <color name="lightGrey">#F2F2F2</color>
     <color name="mediumGrey">#F5F5F5</color>
-    <color name="iconGrey">#9e9e9e</color>
+    <color name="iconGrey">#6f6f6f</color>
     <color name="borderGrey">#e9e9e9</color>
     <color name="disabled">#CCCCCC</color>
     <color name="textDisabled">#898989</color>

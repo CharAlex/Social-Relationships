@@ -24,5 +24,9 @@ class NavigationStack {
 
     fun peek() : Any? = elements.lastOrNull()
 
+    fun remove(element: Any) {
+        elements.remove(element)
+    }
+
     override fun toString(): String = elements.toString()
 }

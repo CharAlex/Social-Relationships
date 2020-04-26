@@ -5,18 +5,56 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:paddingVertical="8dp"
+    android:paddingVertical="@dimen/lg_padding"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <View
+        android:id="@+id/personal_account"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="@dimen/lg_padding"
+        android:layout_marginLeft="@dimen/lg_padding"
+        android:background="@drawable/bg_avatar"
+        android:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/emoji_avatar"
+        app:layout_constraintBottom_toBottomOf="@+id/personal_account"
+        app:layout_constraintEnd_toEndOf="@+id/personal_account"
+        app:layout_constraintStart_toStartOf="@+id/personal_account"
+        app:layout_constraintTop_toTopOf="@+id/personal_account" />
+
+    <TextView
+        android:id="@+id/usernameRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/lg_padding"
+        android:layout_marginLeft="@dimen/lg_padding"
+        android:includeFontPadding="false"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/personal_account"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="@tools:sample/full_names" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/friendsBtn"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:insetBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:insetTop="8dp"
+        android:insetBottom="8dp"
         android:text="Friends"
         android:textAllCaps="false"
         android:textColor="@color/buttonPrimaryBlue"
@@ -28,52 +66,28 @@
         app:layout_constraintEnd_toStartOf="@+id/addUserBtn"
         app:layout_constraintTop_toTopOf="parent"
         app:rippleColor="@color/buttonPrimaryBlue"
-        app:strokeColor="@color/buttonPrimaryBlue"/>
-
-    <ImageView
-        android:id="@+id/avatar"
-        android:layout_width="24dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_person_outline" />
-
-    <TextView
-        android:id="@+id/usernameRow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/avatar"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@tools:sample/full_names" />
+        app:strokeColor="@color/buttonPrimaryBlue" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/addUserBtn"
         style="@style/Widget.MaterialComponents.Button"
-        app:strokeColor="@color/buttonPrimaryBlue"
-        app:rippleColor="@color/buttonPrimaryBlue"
-        app:backgroundTint="@color/buttonPrimaryBlue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:insetBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:insetTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:insetBottom="8dp"
         android:text="Add"
-        android:textColor="@color/white"
         android:textAllCaps="false"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/buttonPrimaryBlue"
         app:icon="@drawable/ic_person_add"
         app:iconSize="20dp"
         app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:rippleColor="@color/buttonPrimaryBlue"
+        app:strokeColor="@color/buttonPrimaryBlue" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

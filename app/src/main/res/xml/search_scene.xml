@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Transition
+        android:id="@+id/search_expand"
+        app:constraintSetStart="@+id/start"
+        app:constraintSetEnd="@+id/end"
+        app:autoTransition="animateToEnd"
+        app:duration="400">
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+        <Constraint android:id="@+id/usernameSearchAutocomplete"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/main_padding"
+            android:layout_marginStart="@dimen/main_padding"
+            android:layout_marginEnd="@dimen/main_padding"
+            android:layout_marginRight="@dimen/main_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+        <Constraint
+            android:id="@+id/cancel_btn"/>
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint android:id="@+id/usernameSearchAutocomplete"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/main_padding"
+            android:layout_marginStart="@dimen/main_padding"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/cancel_btn"
+            app:layout_constraintTop_toTopOf="parent">
+        </Constraint>
+    </ConstraintSet>
+
+</MotionScene>

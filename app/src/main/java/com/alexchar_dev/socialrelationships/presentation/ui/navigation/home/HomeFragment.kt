@@ -10,9 +10,10 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.alexchar_dev.socialrelationships.R
-import com.alexchar_dev.socialrelationships.presentation.utils.OnSwipeTouchListener
-import com.alexchar_dev.socialrelationships.presentation.utils.hide
-import com.alexchar_dev.socialrelationships.presentation.utils.show
+import com.alexchar_dev.socialrelationships.presentation.ui.navigation.MainActivity
+import com.alexchar_dev.socialrelationships.presentation.ui.navigation.search.SearchFragment
+import com.alexchar_dev.socialrelationships.presentation.utils.*
+import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -29,6 +30,11 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        println("debug: HomeFragment backstack ${childFragmentManager.backStackEntryCount}")
+        if(childFragmentManager.backStackEntryCount > 0) {
+            childFragmentManager.popBackStackImmediate()
+        }
+        println("debug: HomeFragment backstack ${childFragmentManager.backStackEntryCount}")
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -37,10 +43,6 @@ class HomeFragment : Fragment() {
 
         setUpRecyclerView()
 
-        addSomeFriendsBtn.setOnClickListener {
-            activity?.bottomNavigationView?.selectedItemId = R.id.search_nav //TODO probably bad idea to access activity view directly
-
-        }
         adapter?.registerAdapterDataObserver(object : AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 if(adapter!!.itemCount > 0) group.hide() else group.show()
@@ -48,6 +50,18 @@ class HomeFragment : Fragment() {
         })
 
         setSliderAnimation()
+
+
+        search_bar.setOnClickListener {
+            println("debug: pushing to main activity backstack")
+            MainActivity.navigationStack.push(0)
+            println("debug: HomeFragment ${MainActivity.navigationStack}")
+            childFragmentManager.beginTransaction()
+                .replace(R.id.search_container, SearchFragment(), "SearchExpanded")
+                .addToBackStack("HomeSearch")
+                .commit()
+        }
+
     }
 
     private fun setSliderAnimation() {
@@ -116,6 +130,7 @@ class HomeFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         adapter?.stopListening()
+        MainActivity.navigationStack.remove(0)
     }
 
     //TODO override onSaveInstanceState and save if the sliderOpen is true

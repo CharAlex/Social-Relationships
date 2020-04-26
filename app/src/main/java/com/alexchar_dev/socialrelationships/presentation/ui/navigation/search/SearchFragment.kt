@@ -73,6 +73,8 @@ class SearchFragment : Fragment() {
             }
 
         })
+
+        cancel_btn.setOnClickListener { activity?.onBackPressed() }
     }
 
     private fun setUpRecyclerView() {
@@ -94,6 +96,12 @@ class SearchFragment : Fragment() {
         }
 
         search_result_recyclerview.adapter = adapter
+
+        usernameSearchAutocomplete.apply {
+            isFocusable = true
+            isIconified = false
+            requestFocusFromTouch()
+        }
     }
 
     override fun onStop() {
@@ -110,6 +118,4 @@ class SearchFragment : Fragment() {
         super.onPause()
         adapter?.stopListening()
     }
-
-
 }

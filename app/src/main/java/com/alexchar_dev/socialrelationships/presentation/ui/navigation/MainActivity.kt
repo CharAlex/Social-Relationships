@@ -29,9 +29,10 @@ class MainActivity : AppCompatActivity() {
     private var savedStateSparseArray = SparseArray<Fragment.SavedState>()
     private var currentSelectItemId = R.id.home_nav
     var fragment: Fragment? = null
+    var isHomeSearch = false
     private val viewModel: MainActivityViewModel by viewModel()
 
-    companion object {
+    companion object { //TODO save this in shared viewmodel
         val navigationStack = NavigationStack()
         const val SAVED_STATE_CONTAINER_KEY = "ContainerKey"
         const val SAVED_STATE_CURRENT_TAB_KEY = "CurrentTabKey"
@@ -39,12 +40,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportFragmentManager.beginTransaction().replace(R.id.fragmentNavContainer, HomeFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragmentNavContainer, HomeFragment(), "Home").setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit()
         navigationStack.push(R.id.home_nav)
 
         setContentView(R.layout.activity_main)
 
         bottomNavigationView.setOnNavigationItemSelectedListener(fragmentSwapNavigationItemSelectedListener)
+
         observeFriendRequest()
 
         viewModel.badgeCount.observe(this, androidx.lifecycle.Observer {
@@ -87,9 +89,6 @@ class MainActivity : AppCompatActivity() {
             removeNotificationBadge()
             return
         }
-        val menu = bottomNavigationView.menu
-
-        menu.findItem(R.id.request_nav).setIcon(R.drawable.ic_people)
 
         bottomNavigationView.getOrCreateBadge(R.id.request_nav).apply {
             backgroundColor = Color.RED
@@ -102,7 +101,6 @@ class MainActivity : AppCompatActivity() {
 
 
     private val fragmentSwapNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-
         navigationStack.push(item.itemId)
 
         when(item.itemId) {
@@ -110,10 +108,10 @@ class MainActivity : AppCompatActivity() {
                 swapFragments(item.itemId, "Request")
                 return@OnNavigationItemSelectedListener true
             }
-            R.id.search_nav -> {
-                swapFragments(item.itemId, "Search")
-                return@OnNavigationItemSelectedListener true
-            }
+//            R.id.search_nav -> {
+//                swapFragments(item.itemId, "Search")
+//                return@OnNavigationItemSelectedListener true
+//            }
             R.id.home_nav -> {
                 swapFragments(item.itemId, "Home")
                 return@OnNavigationItemSelectedListener true
@@ -131,8 +129,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun swapFragments(itemId: Int, key: String) {
-        if(supportFragmentManager.findFragmentByTag(key) == null) { //if next navigation is not the already selected then save state and navigate to that fragment
+
+        println("debug: swap fragments ${supportFragmentManager.findFragmentByTag(key)}")
+
+        if(supportFragmentManager.findFragmentByTag(key) == null || isHomeSearch) { //if next navigation is not the already selected then save state and navigate to that fragment
             savedFragmentState(itemId)
+            println("debug: creating Home fragment")
             createFragment(key, itemId)
         }
     }
@@ -174,7 +176,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        isHomeSearch = navigationStack.peek() == 0
+
         navigationStack.pop()
+
         val nextNavigation = navigationStack.peek()
 
         if(nextNavigation != null) {

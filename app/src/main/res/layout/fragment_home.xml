@@ -64,19 +64,26 @@
                 app:layout_constraintTop_toTopOf="@id/personal_account"
                 app:srcCompat="@drawable/ic_dehaze" />
 
-            <androidx.appcompat.widget.SearchView
+            <View
                 android:id="@+id/search_bar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginHorizontal="@dimen/main_padding"
                 android:layout_marginTop="@dimen/main_padding"
                 android:background="@drawable/autocomplete_input"
-                app:iconifiedByDefault="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/personal_account"
-                app:queryBackground="@color/lightGrey"
-                app:queryHint="Search" />
+                app:layout_constraintTop_toBottomOf="@+id/personal_account"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:tint="@color/iconGrey"
+                app:layout_constraintBottom_toBottomOf="@+id/search_bar"
+                app:layout_constraintStart_toStartOf="@+id/search_bar"
+                app:layout_constraintTop_toTopOf="@+id/search_bar"
+                app:srcCompat="@drawable/ic_search" />
 
             <TextView
                 android:id="@+id/welcomeMessage"
@@ -117,6 +124,15 @@
                 app:layout_constraintTop_toBottomOf="@+id/search_bar"
                 tools:itemCount="4"
                 tools:listitem="@layout/friendship_item" />
+
+            <FrameLayout
+                android:id="@+id/search_container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/search_bar" />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/group"
