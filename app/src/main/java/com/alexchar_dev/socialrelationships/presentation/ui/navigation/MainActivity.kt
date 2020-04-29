@@ -14,6 +14,7 @@ import com.alexchar_dev.socialrelationships.presentation.ui.navigation.notificat
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.profile.ProfileFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.requests.FriendRequestFragment
 import com.alexchar_dev.socialrelationships.presentation.ui.navigation.search.SearchFragment
+import com.alexchar_dev.socialrelationships.presentation.utils.BackStackElement
 import com.alexchar_dev.socialrelationships.presentation.utils.NavigationStack
 import com.alexchar_dev.socialrelationships.presentation.utils.minus
 import com.alexchar_dev.socialrelationships.presentation.utils.plus
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportFragmentManager.beginTransaction().replace(R.id.fragmentNavContainer, HomeFragment(), "Home").setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit()
-        navigationStack.push(R.id.home_nav)
+        navigationStack.push(BackStackElement("Home", R.id.home_nav))
 
         setContentView(R.layout.activity_main)
 
@@ -101,7 +102,12 @@ class MainActivity : AppCompatActivity() {
 
 
     private val fragmentSwapNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        navigationStack.push(item.itemId)
+
+        if(supportFragmentManager.findFragmentByTag(item.toString()) == null) {
+            navigationStack.push(BackStackElement(item.toString(), item.itemId))
+        } else {
+            return@OnNavigationItemSelectedListener false
+        }
 
         when(item.itemId) {
             R.id.request_nav -> {
@@ -132,7 +138,7 @@ class MainActivity : AppCompatActivity() {
 
         println("debug: swap fragments ${supportFragmentManager.findFragmentByTag(key)}")
 
-        if(supportFragmentManager.findFragmentByTag(key) == null || isHomeSearch) { //if next navigation is not the already selected then save state and navigate to that fragment
+        if(supportFragmentManager.findFragmentByTag(key) == null) { //if next navigation is not the already selected then save state and navigate to that fragment
             savedFragmentState(itemId)
             println("debug: creating Home fragment")
             createFragment(key, itemId)
@@ -176,14 +182,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        isHomeSearch = navigationStack.peek() == 0
 
-        navigationStack.pop()
+        var lastNav = navigationStack.peek()
+
+        if(lastNav?.nextStack != null) {
+            navigationStack.peek()?.nextStack = null //probably need while nextStack != null if there would be another level of nested fragments
+
+            supportFragmentManager.findFragmentByTag(navigationStack.previous()?.name)?.childFragmentManager?.popBackStackImmediate()
+        } else {
+            navigationStack.pop()
+        }
 
         val nextNavigation = navigationStack.peek()
 
         if(nextNavigation != null) {
-            bottomNavigationView.selectedItemId = nextNavigation as Int
+            bottomNavigationView.selectedItemId = nextNavigation.id as Int
         }
         else {
             super.onBackPressed()

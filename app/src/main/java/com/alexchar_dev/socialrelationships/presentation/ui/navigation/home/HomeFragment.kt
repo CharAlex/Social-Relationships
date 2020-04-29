@@ -29,12 +29,6 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        println("debug: HomeFragment backstack ${childFragmentManager.backStackEntryCount}")
-        if(childFragmentManager.backStackEntryCount > 0) {
-            childFragmentManager.popBackStackImmediate()
-        }
-        println("debug: HomeFragment backstack ${childFragmentManager.backStackEntryCount}")
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -53,12 +47,11 @@ class HomeFragment : Fragment() {
 
 
         search_bar.setOnClickListener {
-            println("debug: pushing to main activity backstack")
-            MainActivity.navigationStack.push(0)
-            println("debug: HomeFragment ${MainActivity.navigationStack}")
+            MainActivity.navigationStack.get("Home")?.nextStack = BackStackElement("Search")
+
             childFragmentManager.beginTransaction()
                 .replace(R.id.search_container, SearchFragment(), "SearchExpanded")
-                .addToBackStack("HomeSearch")
+                .addToBackStack("Search")
                 .commit()
         }
 
@@ -130,7 +123,6 @@ class HomeFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         adapter?.stopListening()
-        MainActivity.navigationStack.remove(0)
     }
 
     //TODO override onSaveInstanceState and save if the sliderOpen is true

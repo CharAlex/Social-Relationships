@@ -20,7 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.ui.navigation.MainActivity" />
+        <activity android:name=".presentation.ui.navigation.MainActivity"
+            android:windowSoftInputMode="adjustPan"
+            />
     </application>
 
 </manifest>
